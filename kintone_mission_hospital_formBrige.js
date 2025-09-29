@@ -1,6 +1,8 @@
 window.FormBridgeEvents = window.FormBridgeEvents || {};
-window.FormBridgeEvents.initialized = [function(state) {
-  const validators = {
+
+// バリデーションルールの登録
+window.FormBridgeEvents.addValidators = function(state) {
+  return {
     hiragana_only: {
       getMessage: () => 'ひらがなで入力してください。',
       validate: value => /^[ぁ-んー]+$/.test(value)
@@ -10,8 +12,10 @@ window.FormBridgeEvents.initialized = [function(state) {
       validate: value => /^\d{4}-\d{2}-\d{2}$/.test(value)
     }
   };
+};
 
-  // バリデーションを state に直接適用
+// 初期化時にバリデーションをフィールドに適用
+window.FormBridgeEvents.initialized = [function(state) {
   state.fields.find(({code}) => code === "furigana")?.validations.push({
     params: [],
     rule: "hiragana_only"
@@ -22,9 +26,5 @@ window.FormBridgeEvents.initialized = [function(state) {
     rule: "valid_date"
   });
 
-  // バリデーションルールを返す
-  return {
-    ...state,
-    validators
-  };
+  return state;
 }];
