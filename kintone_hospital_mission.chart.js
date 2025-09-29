@@ -5,41 +5,42 @@
   script.src = 'https://cdn.jsdelivr.net/npm/chart.js@2.9.4';
   script.onload = function () {
     kintone.events.on('app.record.index.show', function (event) {
-     const records = event.records;
-if (!records || records.length === 0) return;
+      const records = event.records;
+      if (!records || records.length === 0) return;
 
-// 一覧の先頭レコードの患者番号を取得
-const targetPatient = records[0].患者番号.value;
+      // 一覧の先頭レコードの患者番号を取得
+      const targetPatient = records[0].患者番号.value;
 
-// その患者のデータだけ抽出
-const filtered = records.filter(r => r.患者番号.value === targetPatient);
-
+      // その患者のデータだけ抽出
+      const filtered = records.filter(r => r.患者番号.value === targetPatient);
       filtered.sort((a, b) => new Date(a.日付.value) - new Date(b.日付.value));
 
-      const labels = filtered.map(r => r.日付.value);
-      const tempData = filtered.map((r, i) => ({
+      // データ整形（x: 日付, y: 値）
+      const tempData = filtered.map(r => ({
         x: r.日付.value,
         y: parseFloat(r.体温.value?.replace(/[^\d.]/g, '') || '0')
       }));
-      const bpHighData = filtered.map((r, i) => ({
+      const bpHighData = filtered.map(r => ({
         x: r.日付.value,
         y: parseInt(r['収縮期血圧'].value || '0')
       }));
-      const bpLowData = filtered.map((r, i) => ({
+      const bpLowData = filtered.map(r => ({
         x: r.日付.value,
         y: parseInt(r['拡張期血圧'].value || '0')
       }));
-      const pulseData = filtered.map((r, i) => ({
+      const pulseData = filtered.map(r => ({
         x: r.日付.value,
         y: parseInt(r.脈拍.value || '0')
       }));
 
+      // canvas取得
       const ctx = document.getElementById('myChart');
       if (!ctx) {
         console.log('canvasが見つかりません');
         return;
       }
 
+      // グラフ描画
       new Chart(ctx, {
         type: 'line',
         data: {
@@ -79,7 +80,7 @@ const filtered = records.filter(r => r.患者番号.value === targetPatient);
           maintainAspectRatio: false,
           title: {
             display: true,
-            text: '患者00001のバイタルサイン推移'
+            text: `患者 ${targetPatient} のバイタルサイン推移`
           },
           scales: {
             xAxes: [{
