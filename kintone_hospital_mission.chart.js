@@ -5,29 +5,30 @@
   script.src = 'https://cdn.jsdelivr.net/npm/chart.js@2.9.4';
   script.onload = function () {
     kintone.events.on('app.record.index.show', function (event) {
-  const viewName = event.viewName;
+      const viewName = event.viewName;
+      if (viewName !== 'バイタルサイン一覧') return;
 
-　const canvas = document.createElement('canvas');
-canvas.id = 'myChart';
-canvas.style.height = '400px';
-canvas.style.width = '100%';
-kintone.app.getHeaderSpaceElement().appendChild(canvas);
+      const records = event.records;
+      if (!records || records.length === 0) return;
 
-      
-  if (viewName !== 'バイタルサイン一覧') return;
+      // canvasを動的に追加（重複防止）
+      if (!document.getElementById('myChart')) {
+        const canvas = document.createElement('canvas');
+        canvas.id = 'myChart';
+        canvas.style.height = '400px';
+        canvas.style.width = '100%';
+        kintone.app.getHeaderSpaceElement().appendChild(canvas);
+      }
 
-      // 一覧の先頭レコードの患者番号を取得
       const targetPatient = records[0]?.患者番号?.value;
       if (!targetPatient) {
         console.log('患者番号が取得できませんでした');
         return;
       }
 
-      // その患者のデータだけ抽出
       const filtered = records.filter(r => r.患者番号?.value === targetPatient);
       filtered.sort((a, b) => new Date(a.日付.value) - new Date(b.日付.value));
 
-      // 日付をISO形式に変換
       const formatDate = (str) => new Date(str).toISOString();
 
       const tempData = filtered.map(r => ({
@@ -47,7 +48,6 @@ kintone.app.getHeaderSpaceElement().appendChild(canvas);
         y: parseInt(r.脈拍.value || '0')
       }));
 
-      // 描画タイミングを調整
       setTimeout(() => {
         const ctx = document.getElementById('myChart');
         if (!ctx) {
@@ -146,7 +146,7 @@ kintone.app.getHeaderSpaceElement().appendChild(canvas);
             }
           }
         });
-      }, 300); // 描画タイミングを少し遅らせる
+      }, 300);
     });
   };
   document.head.appendChild(script);
