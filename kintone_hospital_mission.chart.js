@@ -13,21 +13,27 @@
 
     // 全患者番号を取得してセレクトボックスに追加
     kintone.api(kintone.api.url('/k/v1/records', true), 'GET', {
-      app: appId,
-      query: 'order by 日付 asc',
-      fields: ['患者番号']
-    }, function (resp) {
-      const uniquePatients = [...new Set(resp.records.map(r => r.患者番号.value))];
-      uniquePatients.forEach(pn => {
-        const option = document.createElement('option');
-        option.value = pn;
-        option.textContent = pn;
-        select.appendChild(option);
-      });
+  app: appId,
+  query: 'order by 日付 asc',
+  fields: ['患者番号']
+}, function (resp) {
+  const records = resp.records;
+  if (!records || records.length === 0) {
+    console.log('患者番号のレコードが取得できませんでした');
+    return;
+  }
 
-      // 初期表示（最初の患者）
-      drawChart(uniquePatients[0]);
-    });
+  const uniquePatients = [...new Set(records.map(r => r.患者番号.value))];
+  uniquePatients.forEach(pn => {
+    const option = document.createElement('option');
+    option.value = pn;
+    option.textContent = pn;
+    select.appendChild(option);
+  });
+
+  drawChart(uniquePatients[0]);
+});
+
 
     // 選択変更時にグラフ更新
     select.addEventListener('change', function () {
