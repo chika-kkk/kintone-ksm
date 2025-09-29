@@ -1,5 +1,7 @@
 console.log("読み込みできてる")
 
+window.FormBridgeEvents = window.FormBridgeEvents || {};
+
 window.FormBridgeEvents.beforeSubmit = [function(state) {
   const furiganaField = state.fields.find(f => f.code === "ふりがな");
   const birthdateField = state.fields.find(f => f.code === "生年月日");
