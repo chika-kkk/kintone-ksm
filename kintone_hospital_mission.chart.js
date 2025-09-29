@@ -49,9 +49,12 @@
   title: {
     display: true,
     text: '患者00001のバイタルサイン推移'
+  },
+  scales: {
+    yAxes: [{
+      ticks: {
+        beginAtZero: true
+      }
+    }]
   }
 }
-
-    });
-  });
-})();
