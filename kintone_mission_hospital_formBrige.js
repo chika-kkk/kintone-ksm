@@ -1,3 +1,4 @@
+console.log("JS loaded")
 (function waitForFb(retry = 0) {
   if (typeof fb !== 'undefined') {
     fb.events.initialized = [function(state) {
