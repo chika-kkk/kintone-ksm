@@ -21,7 +21,7 @@ fb.addValidators = function(state) {
 
 // ひらがなチェック
 fb.events.form.created.push(function(state) {
-  state.fields.find(({code}) => code === "furigana").validations.push({
+  state.fields.find(({code}) => code === "ひらがな").validations.push({
     params: [],
     rule: 'hiragana_only'
   });
@@ -30,7 +30,7 @@ fb.events.form.created.push(function(state) {
 
 // 生年月日チェック
 fb.events.form.created.push(function(state) {
-  state.fields.find(({code}) => code === "birthdate").validations.push({
+  state.fields.find(({code}) => code === "生年月日").validations.push({
     params: [],
     rule: 'valid_date'
   });
@@ -39,20 +39,19 @@ fb.events.form.created.push(function(state) {
 
 // 性別チェック
 fb.events.form.created.push(function(state) {
-  state.fields.find(({code}) => code === "gender").validations.push({
+  state.fields.find(({code}) => code === "性別").validations.push({
     params: [],
     rule: 'gender_check'
   });
   return state;
 });
 
-// 電話番号重複チェック（kViewer連携）
 fb.events.fields.phone.changed = [function(state) {
   const phoneValue = state.record.phone.value;
-  const kv_data = "https://kviewer.kintoneapp.com/view/〇〇"; // あなたのkViewerビューURLに置き換えてね
+  const kv_data = "https://kviewer.kintoneapp.com/view/〇〇";
   const params = {
     additionalFilters: [
-      { width: "and", field: "電話番号", sign: "=", value: phoneValue }
+      { width: "and", field: "緊急連絡先", sign: "=", value: phoneValue }
     ]
   };
   const url = kViewr.generateUrl(kv_data, params);
