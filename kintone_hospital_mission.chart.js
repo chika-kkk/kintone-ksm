@@ -12,12 +12,13 @@
       if (!records || records.length === 0) return;
 
       // canvasを動的に追加（重複防止）
-      if (!document.getElementById('myChart')) {
-        const canvas = document.createElement('canvas');
-        canvas.id = 'myChart';
-        canvas.style.height = '400px';
-        canvas.style.width = '100%';
-        kintone.app.getHeaderSpaceElement().appendChild(canvas);
+      let canvasEl = document.getElementById('myChart');
+      if (!canvasEl) {
+        canvasEl = document.createElement('canvas');
+        canvasEl.id = 'myChart';
+        canvasEl.style.height = '400px';
+        canvasEl.style.width = '100%';
+        kintone.app.getHeaderSpaceElement().appendChild(canvasEl);
       }
 
       const targetPatient = records[0]?.患者番号?.value;
@@ -32,13 +33,13 @@
       const formatDate = (str) => new Date(str).toISOString();
 
       const tempData = filtered.map(r => {
-  const raw = r.体温.value || '';
-  const cleaned = raw.replace(/[^\d.]/g, '');
-  return {
-    x: formatDate(r.日付.value),
-    y: parseFloat(cleaned || '0')
-  };
-});
+        const raw = r.体温.value || '';
+        const cleaned = raw.replace(/[^\d.]/g, '');
+        return {
+          x: formatDate(r.日付.value),
+          y: parseFloat(cleaned || '0')
+        };
+      });
 
       const bpHighData = filtered.map(r => ({
         x: formatDate(r.日付.value),
@@ -54,103 +55,107 @@
       }));
 
       setTimeout(() => {
-        const ctx = document.getElementById('myChart');
+        const ctx = canvasEl.getContext('2d');
         if (!ctx) {
-          console.log('canvasが見つかりません');
+          console.log('ctxが取得できませんでした');
           return;
         }
 
-        new Chart(ctx, {
-          type: 'line',
-          data: {
-            datasets: [
-              {
-                label: '体温',
-                data: tempData,
-                borderColor: 'red',
-                fill: false,
-                yAxisID: 'y-temp'
-              },
-              {
-                label: '収縮期血圧',
-                data: bpHighData,
-                borderColor: 'blue',
-                fill: false,
-                yAxisID: 'y-vitals'
-              },
-              {
-                label: '拡張期血圧',
-                data: bpLowData,
-                borderColor: 'purple',
-                fill: false,
-                yAxisID: 'y-vitals'
-              },
-              {
-                label: '脈拍',
-                data: pulseData,
-                borderColor: 'green',
-                fill: false,
-                yAxisID: 'y-vitals'
-              }
-            ]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            title: {
-              display: true,
-              text: `患者 ${targetPatient} のバイタルサイン推移`
-            },
-            scales: {
-              xAxes: [{
-                type: 'time',
-                time: {
-                  unit: 'day',
-                  displayFormats: {
-                    day: 'YYYY-MM-DD'
-                  }
-                },
-                scaleLabel: {
-                  display: true,
-                  labelString: '日付'
-                }
-              }],
-              yAxes: [
+        try {
+          new Chart(ctx, {
+            type: 'line',
+            data: {
+              datasets: [
                 {
-                  id: 'y-temp',
-                  type: 'linear',
-                  position: 'left',
-                  ticks: {
-                    min: 35,
-                    max: 40,
-                    stepSize: 0.5
-                  },
-                  scaleLabel: {
-                    display: true,
-                    labelString: '体温（℃）'
-                  }
+                  label: '体温',
+                  data: tempData,
+                  borderColor: 'red',
+                  fill: false,
+                  yAxisID: 'y-temp'
                 },
                 {
-                  id: 'y-vitals',
-                  type: 'linear',
-                  position: 'right',
-                  ticks: {
-                    min: 0,
-                    max: 200,
-                    stepSize: 20
-                  },
-                  gridLines: {
-                    drawOnChartArea: false
-                  },
-                  scaleLabel: {
-                    display: true,
-                    labelString: '血圧・脈拍'
-                  }
+                  label: '収縮期血圧',
+                  data: bpHighData,
+                  borderColor: 'blue',
+                  fill: false,
+                  yAxisID: 'y-vitals'
+                },
+                {
+                  label: '拡張期血圧',
+                  data: bpLowData,
+                  borderColor: 'purple',
+                  fill: false,
+                  yAxisID: 'y-vitals'
+                },
+                {
+                  label: '脈拍',
+                  data: pulseData,
+                  borderColor: 'green',
+                  fill: false,
+                  yAxisID: 'y-vitals'
                 }
               ]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              title: {
+                display: true,
+                text: `患者 ${targetPatient} のバイタルサイン推移`
+              },
+              scales: {
+                xAxes: [{
+                  type: 'time',
+                  time: {
+                    unit: 'day',
+                    displayFormats: {
+                      day: 'YYYY-MM-DD'
+                    }
+                  },
+                  scaleLabel: {
+                    display: true,
+                    labelString: '日付'
+                  }
+                }],
+                yAxes: [
+                  {
+                    id: 'y-temp',
+                    type: 'linear',
+                    position: 'left',
+                    ticks: {
+                      min: 35,
+                      max: 40,
+                      stepSize: 0.5
+                    },
+                    scaleLabel: {
+                      display: true,
+                      labelString: '体温（℃）'
+                    }
+                  },
+                  {
+                    id: 'y-vitals',
+                    type: 'linear',
+                    position: 'right',
+                    ticks: {
+                      min: 0,
+                      max: 200,
+                      stepSize: 20
+                    },
+                    gridLines: {
+                      drawOnChartArea: false
+                    },
+                    scaleLabel: {
+                      display: true,
+                      labelString: '血圧・脈拍'
+                    }
+                  }
+                ]
+              }
             }
-          }
-        });
+          });
+        } catch (e) {
+          console.error('Chart.js描画エラー:', e);
+        }
       }, 300);
     });
   };
