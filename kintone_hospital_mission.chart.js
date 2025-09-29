@@ -47,7 +47,7 @@
         responsive: true,
         title: {
           display: true,
-          text: '患者00001のバイタルサイン推移'
+          text: 'バイタルサイン推移'
         }
       }
     });
