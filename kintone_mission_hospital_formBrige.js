@@ -1,25 +1,15 @@
 console.log("読み込みできてる");
 
-// FormBridgeEventsが利用可能になった後、イベントを登録
-// FormBridgeの新しい構文に合わせ、配列代入ではなく .on() を使用します。
+// FormBridgeがkintoneのイベント形式を模倣している場合に備え、
+// kintone.events.on の形式で record.submit.before にイベントを登録する。
+kintone.events.on(['app.record.create.submit', 'app.record.edit.submit'], (state) => {
+    console.log("kintone.events.on: フォーム送信前イベントが実行されました。");
 
-window.FormBridgeEvents.on('form.created', (state) => {
-    console.log("FormBridgeEvents.on: form.created が実行されました。");
+    // フィールドコードは全角である前提
+    const furiganaField = state.record.ふりがな;
+    const birthdateField = state.record.生年月日;
 
-    // FormBridgeではカスタムバリデーションを使わず、beforeSubmitで処理する場合、
-    // ここでフィールドコードの修正などを行えますが、今回はスキップします。
-
-    return state;
-});
-
-window.FormBridgeEvents.on('record.submit.before', (state) => {
-    console.log("FormBridgeEvents.on: record.submit.before が実行されました。");
-    
-    // フィールドコードが全角（ふりがな, 生年月日）で定義されている前提で処理を記述
-    const furiganaField = state.fields.find(f => f.code === "ふりがな");
-    const birthdateField = state.fields.find(f => f.code === "生年月日");
-
-    // 値がない場合はバリデーションをスキップ
+    // 値の取得とチェック
     const furiganaValue = furiganaField?.value || "";
     const birthdateValue = birthdateField?.value || "";
 
@@ -29,14 +19,15 @@ window.FormBridgeEvents.on('record.submit.before', (state) => {
     // バリデーションチェック
     if (!furiganaValid || !birthdateValid) {
         alert("入力内容に誤りがあります。ふりがなはひらがな、生年月日はYYYY-MM-DD形式で入力してください。");
-        // false を返す代わりに、Promise.reject() または throw new Error() を使用
-        // FormBridgeの仕様に合わせて return state ではなく Promise.reject() を使います
-        return Promise.reject(state);
+        
+        // kintone形式では、エラー時にPromise.reject()ではなく、
+        // イベントオブジェクトの返却を停止し、エラーメッセージを設定します。
+        // FormBridgeでこれが動作するか試します。
+        
+        // ※ kintone形式の代替案のため、エラーメッセージはkintoneの標準の場所には表示されません。
+        // alertで通知し、送信を止めます。
+        return false;
     }
-    
-    // 正常な場合は Promise.resolve() を返す
-    return Promise.resolve(state);
-});
 
-// NOTE: 従来の形式 (fb.events.initialized) でのカスタムバリデータ登録が動かない場合、
-// beforeSubmit でのバリデーションは、この形式が最も確実です。
+    return state;
+});
