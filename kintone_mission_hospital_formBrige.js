@@ -1,5 +1,4 @@
 fb.events.form.created.push(function(state) {
-  // バリデーションルール定義
   fb.addValidators = function(state) {
     return {
       hiragana_only: {
