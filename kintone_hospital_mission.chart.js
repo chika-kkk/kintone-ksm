@@ -31,10 +31,15 @@
 
       const formatDate = (str) => new Date(str).toISOString();
 
-      const tempData = filtered.map(r => ({
-        x: formatDate(r.日付.value),
-        y: parseFloat(r.体温.value?.replace(/[^\d.]/g, '') || '0')
-      }));
+      const tempData = filtered.map(r => {
+  const raw = r.体温.value || '';
+  const cleaned = raw.replace(/[^\d.]/g, '');
+  return {
+    x: formatDate(r.日付.value),
+    y: parseFloat(cleaned || '0')
+  };
+});
+
       const bpHighData = filtered.map(r => ({
         x: formatDate(r.日付.value),
         y: parseInt(r['収縮期血圧'].value || '0')
