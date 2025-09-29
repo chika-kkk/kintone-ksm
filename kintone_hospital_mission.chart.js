@@ -1,11 +1,6 @@
 const script = document.createElement('script');
 script.src = 'https://cdn.jsdelivr.net/npm/chart.js@2.9.4';
 script.onload = function () {
-  drawChart(); // Chart.jsが読み込まれた後に描画
-};
-document.head.appendChild(script);
-
-function drawChart() {
   kintone.events.on('app.record.index.show', function (event) {
     const records = event.records;
     if (!records || records.length === 0) return;
@@ -17,7 +12,10 @@ function drawChart() {
     const pulseData = records.map(r => parseInt(r.脈拍.value));
 
     const ctx = document.getElementById('myChart');
-    if (!ctx) return;
+    if (!ctx) {
+      console.log('canvasが見つかりません');
+      return;
+    }
 
     new Chart(ctx, {
       type: 'line',
@@ -59,4 +57,6 @@ function drawChart() {
       }
     });
   });
-}
+};
+document.head.appendChild(script);
+
