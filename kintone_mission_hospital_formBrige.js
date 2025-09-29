@@ -20,40 +20,20 @@ fb.events.form.created.push(function(state) {
     };
   };
 
-  // バリデーション適用
-  state.fields.find(({code}) => code === "ひらがな")?.validations.push({
+  state.fields.find(({code}) => code === "furigana")?.validations.push({
     params: [],
     rule: 'hiragana_only'
   });
 
-  state.fields.find(({code}) => code === "生年月日")?.validations.push({
+  state.fields.find(({code}) => code === "birthdate")?.validations.push({
     params: [],
     rule: 'valid_date'
   });
 
-  state.fields.find(({code}) => code === "性別")?.validations.push({
+  state.fields.find(({code}) => code === "gender")?.validations.push({
     params: [],
     rule: 'gender_check'
   });
 
   return state;
 });
-
-// 電話番号重複チェック（kViewer連携）
-fb.events.fields.phone.changed = [function(state) {
-  const phoneValue = state.record.phone.value;
-  const kv_data = "https://kviewer.kintoneapp.com/view/416293";
-  const params = {
-    additionalFilters: [
-      { width: "and", field: "緊急連絡先", sign: "=", value: phoneValue }
-    ]
-  };
-  const url = kViewr.generateUrl(kv_data, params);
-  return $j.ajax({ url }).then(function(data) {
-    state.fields.find(({code}) => code === "phone")?.validations.push({
-      params: [data],
-      rule: 'phone_unique'
-    });
-    return state;
-  });
-}];
