@@ -13,7 +13,8 @@ kintone.events.on('app.record.index.show', function(event) {
   // データの準備
   const labels = records.map(r => r.日付.value);
   const tempData = records.map(r => parseFloat(r.体温.value));
-  const bpHighData = records.map(r => parseInt(r['血圧（上）'].value));
+  const bpHighData = records.map(r => parseInt(r['収縮期血圧'].value));
+  const bplowData = records.map(r => parseInt(r['拡張期血圧'].value));
   const pulseData = records.map(r => parseInt(r.脈拍.value));
 
   // Chart.jsで描画
@@ -30,8 +31,13 @@ kintone.events.on('app.record.index.show', function(event) {
           fill: false
         },
         {
-          label: '血圧（上）',
+          label: '収縮期血圧',
           data: bpHighData,
+          borderColor: 'blue',
+          fill: false
+        },
+        label: '拡張期血圧',
+          data: bplowData,
           borderColor: 'blue',
           fill: false
         },
