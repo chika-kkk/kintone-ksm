@@ -36,6 +36,7 @@ kintone.events.on('app.record.index.show', function(event) {
           borderColor: 'blue',
           fill: false
         },
+        {
         label: '拡張期血圧',
           data: bplowData,
           borderColor: 'blue',
