@@ -6,6 +6,14 @@
   script.onload = function () {
     kintone.events.on('app.record.index.show', function (event) {
   const viewName = event.viewName;
+
+　const canvas = document.createElement('canvas');
+canvas.id = 'myChart';
+canvas.style.height = '400px';
+canvas.style.width = '100%';
+kintone.app.getHeaderSpaceElement().appendChild(canvas);
+
+      
   if (viewName !== 'バイタルサイン一覧') return;
 
       // 一覧の先頭レコードの患者番号を取得
