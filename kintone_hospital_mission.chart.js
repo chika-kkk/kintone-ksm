@@ -5,8 +5,8 @@
   script.src = 'https://cdn.jsdelivr.net/npm/chart.js@2.9.4';
   script.onload = function () {
     kintone.events.on('app.record.index.show', function (event) {
-      const records = event.records;
-      if (!records || records.length === 0) return;
+  const viewName = event.viewName;
+  if (viewName !== 'バイタルサイン一覧') return;
 
       // 一覧の先頭レコードの患者番号を取得
       const targetPatient = records[0]?.患者番号?.value;
