@@ -1,3 +1,5 @@
+console.log("読み込みできてる")
+
 window.FormBridgeEvents = window.FormBridgeEvents || {};
 
 // バリデーションルールの登録
