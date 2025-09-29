@@ -48,7 +48,7 @@ fb.events.form.created.push(function(state) {
 
 fb.events.fields.phone.changed = [function(state) {
   const phoneValue = state.record.phone.value;
-  const kv_data = "https://kviewer.kintoneapp.com/view/〇〇";
+  const kv_data = "https://kviewer.kintoneapp.com/view/416293";
   const params = {
     additionalFilters: [
       { width: "and", field: "緊急連絡先", sign: "=", value: phoneValue }
