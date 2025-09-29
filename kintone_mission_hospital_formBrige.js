@@ -1,4 +1,5 @@
-fb.events.initialized = [function(state) {
+window.FormBridgeEvents = window.FormBridgeEvents || {};
+window.FormBridgeEvents.initialized = [function(state) {
   const validators = {
     hiragana_only: {
       getMessage: () => 'ひらがなで入力してください。',
@@ -10,17 +11,20 @@ fb.events.initialized = [function(state) {
     }
   };
 
+  // バリデーションを state に直接適用
   state.fields.find(({code}) => code === "furigana")?.validations.push({
     params: [],
-    rule: 'hiragana_only'
+    rule: "hiragana_only"
   });
 
   state.fields.find(({code}) => code === "birthdate")?.validations.push({
     params: [],
-    rule: 'valid_date'
+    rule: "valid_date"
   });
 
-  fb.addValidators = () => validators;
-
-  return state;
+  // バリデーションルールを返す
+  return {
+    ...state,
+    validators
+  };
 }];
