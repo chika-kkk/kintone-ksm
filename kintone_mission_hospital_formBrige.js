@@ -29,5 +29,7 @@ console.log("JS loaded")
     }];
   } else if (retry < 10) {
     setTimeout(() => waitForFb(retry + 1), 300); // 最大3秒まで待機
+  } else {
+    console.error("FormBridge (fb) が定義されませんでした。");
   }
 })();
