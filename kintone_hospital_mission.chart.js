@@ -53,7 +53,10 @@
   scales: {
     yAxes: [{
       ticks: {
-        beginAtZero: true
+        beginAtZero: true,
+        min: 0,           // 最小値
+        max: 200,         // 最大値
+        stepSize: 20      // 目盛の間隔
       }
     }]
   }
