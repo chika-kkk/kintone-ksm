@@ -37,3 +37,22 @@ fb.events.form.created.push(function(state) {
 
   return state;
 });
+
+// 電話番号重複チェック（kViewer連携）
+fb.events.fields.phone.changed = [function(state) {
+  const phoneValue = state.record.phone.value;
+  const kv_data = "https://kviewer.kintoneapp.com/view/〇〇"; // あなたのビューURLに置き換えてね
+  const params = {
+    additionalFilters: [
+      { width: "and", field: "電話番号", sign: "=", value: phoneValue }
+    ]
+  };
+  const url = kViewr.generateUrl(kv_data, params);
+  return $j.ajax({ url }).then(function(data) {
+    state.fields.find(({code}) => code === "phone")?.validations.push({
+      params: [data],
+      rule: 'phone_unique'
+    });
+    return state;
+  });
+}];
