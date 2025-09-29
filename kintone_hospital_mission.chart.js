@@ -43,13 +43,15 @@
           { label: '脈拍', data: pulseData, borderColor: 'green', fill: false }
         ]
       },
-      options: {
-        responsive: true,
-        title: {
-          display: true,
-          text: 'バイタルサイン推移'
-        }
-      }
+     options: {
+  responsive: true,
+  maintainAspectRatio: false,
+  title: {
+    display: true,
+    text: '患者00001のバイタルサイン推移'
+  }
+}
+
     });
   });
 })();
