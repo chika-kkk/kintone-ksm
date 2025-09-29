@@ -13,10 +13,13 @@
 
     // 全患者番号を取得してセレクトボックスに追加
     kintone.api(kintone.api.url('/k/v1/records', true), 'GET', {
-      app: appId,
-      query: 'order by 日付 asc',
-      fields: ['患者番号']
-    }, function (resp) {
+  app: 20,
+  query: 'order by 日付 asc',
+  fields: ['患者番号']
+}, function(resp) {
+  console.log(resp.records);
+});
+
       const records = resp.records;
       const uniquePatients = [...new Set(records.map(r => r.患者番号?.value).filter(Boolean))];
 
