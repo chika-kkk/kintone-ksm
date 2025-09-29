@@ -12,11 +12,8 @@ fb.events.initialized = [function(state) {
             gender_check: {
                 getMessage: () => '性別は「男」か「女」のいずれかを選択してください。',
                 validate: value => value === '男' || value === '女'
-            },
-            phone_unique: {
-                getMessage: () => 'この電話番号はすでに登録されています。',
-                validate: (value, params) => params[0].totalCount === 0
             }
+            // phone_unique は削除
         };
     };
 
@@ -39,35 +36,7 @@ fb.events.initialized = [function(state) {
         return state;
     });
 
-    fb.events.fields.phone.changed = [function(state) {
-        const phoneField = state.fields.find(({code}) => code === "phone");
-
-        if (!phoneField || !state.record.phone.value) {
-            phoneField.validations = phoneField.validations.filter(v => v.rule !== 'phone_unique');
-            return state;
-        }
-
-        const phoneValue = state.record.phone.value;
-        const kv_data = "https://kviewer.kintoneapp.com/view/416293";
-        const params = {
-            additionalFilters: [
-                { width: "and", field: "電話番号", sign: "=", value: phoneValue }
-            ]
-        };
-        
-        const url = kViewr.generateUrl(kv_data, params);
-        
-        return $j.ajax({ url }).then(function(data) {
-            phoneField.validations = phoneField.validations.filter(v => v.rule !== 'phone_unique');
-
-            phoneField.validations.push({
-                params: [data],
-                rule: 'phone_unique'
-            });
-
-            return state;
-        });
-    }];
-
+    // 電話番号の変更時イベントも、重複チェックロジックが不要になったため削除
+    
     return state;
 }];
