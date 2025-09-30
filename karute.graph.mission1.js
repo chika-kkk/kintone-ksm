@@ -15,6 +15,8 @@
       fields: ['患者番号']
     });
 
+    console.log('取得したレコード:', resp.records);
+
     const patientCodes = [...new Set(
   resp.records
     .map(r => r['患者番号']?.value)
