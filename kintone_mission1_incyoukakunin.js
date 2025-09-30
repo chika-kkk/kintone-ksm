@@ -30,8 +30,8 @@ console.log(OK);
 
     const body = {
       app: appId,
-      query: '院長サイン = "" or 院長サイン = "未承認"',
-      fields: ['氏名', '病名', '入院日', '院長サイン']
+      query: '承認欄 = "" or 承認欄 = "未承認"',
+      fields: ['氏名', '病名', '入院日', '承認欄']
     };
 
     kintone.api(kintone.api.url('/k/v1/records', true), 'GET', body, function (resp) {
