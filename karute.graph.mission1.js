@@ -15,7 +15,11 @@
       fields: ['患者番号']
     });
 
-    const patientCodes = [...new Set(resp.records.map(r => r['patient_code'].value))];
+    const patientCodes = [...new Set(
+  resp.records
+    .map(r => r['患者番号']?.value)
+    .filter(v => v) // 空欄を除外
+)];
 
     // ドロップダウンに追加
     select.innerHTML = '<option value="">選択してください</option>';
