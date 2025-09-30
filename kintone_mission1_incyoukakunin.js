@@ -1,3 +1,5 @@
+console.log(okk);
+
 (function () {
   'use strict';
 
@@ -27,10 +29,10 @@
     }
 
     const body = {
-      app: appId,
-      query: '承認欄 = "" or 承認欄 = "未承認"',
-      fields: ['氏名', '病名', '入院日', '承認欄']
-    };
+  app: appId,
+  query: '承認欄 in ("", "未承認")',
+  fields: ['氏名', '病名', '入院日', '承認欄']
+};
 
     kintone.api(kintone.api.url('/k/v1/records', true), 'GET', body, function (resp) {
       const tbody = document.querySelector('#recordTable tbody');
