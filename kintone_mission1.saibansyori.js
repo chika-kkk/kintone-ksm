@@ -8,10 +8,11 @@
 
     // 採番されていないレコードを取得
     const resp = await kintone.api(kintone.api.url('/k/v1/records', true), 'GET', {
-      app: appId,
-      query: '患者コード = "" order by 作成日時 asc',
-      fields: ['患者コード']
-    });
+  app: appId,
+  query: '患者コード = "" order by 作成日時 asc',
+  fields: ['患者コード', '$id']
+});
+
 
     if (resp.records.length === 0) return;
 
