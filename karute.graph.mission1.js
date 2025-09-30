@@ -1,6 +1,34 @@
 (function () {
   'use strict';
 
+  kintone.events.on('app.record.index.show', function (event) {
+    const records = event.records;
+
+    records.forEach(function (record, index) {
+      const patientCode = record['patient_code'].value;
+      const rowElement = document.querySelectorAll('.recordlist-row')[index];
+
+      if (rowElement) {
+        const button = document.createElement('button');
+        button.textContent = 'グラフを見る';
+        button.style.marginLeft = '10px';
+        button.className = 'kintoneplugin-button-normal';
+
+        button.onclick = function () {
+          const url = location.origin + '/k/' + kintone.app.getId() + '/show#record=' + record.$id.value;
+          window.open(url, '_blank');
+        };
+
+        rowElement.querySelector('.recordlist-title').appendChild(button);
+      }
+    });
+  });
+})();
+
+
+(function () {
+  'use strict';
+
   kintone.events.on('app.record.detail.show', async function (event) {
     const record = event.record;
     const patientCode = record['patient_code'].value;
