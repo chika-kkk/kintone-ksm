@@ -12,7 +12,7 @@
     const resp = await kintone.api(kintone.api.url('/k/v1/records', true), 'GET', {
       app: kintone.app.getId(),
       query: 'order by 作成日時 asc',
-      fields: ['patient_code']
+      fields: ['患者番号']
     });
 
     const patientCodes = [...new Set(resp.records.map(r => r['patient_code'].value))];
@@ -33,7 +33,7 @@
 
       const dataResp = await kintone.api(kintone.api.url('/k/v1/records', true), 'GET', {
         app: kintone.app.getId(),
-        query: `patient_code = "${selectedCode}" order by 作成日時 asc`,
+        query: `患者番号 = "${selectedCode}" order by 作成日時 asc`,
         fields: ['体温', '脈', '収縮期血圧', '拡張期血圧', '作成日時']
       });
 
