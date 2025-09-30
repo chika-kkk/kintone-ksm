@@ -6,15 +6,17 @@
   kintone.events.on('app.record.index.show', async function () {
     const appId = kintone.app.getId();
 
-    // 採番されていないレコードを取得
+    // 採番されていないレコードを取得（$id を含める！）
     const resp = await kintone.api(kintone.api.url('/k/v1/records', true), 'GET', {
-  app: appId,
-  query: '患者コード = "" order by 作成日時 asc',
-  fields: ['患者コード', '$id']
-});
+      app: appId,
+      query: '患者コード = "" order by 作成日時 asc',
+      fields: ['患者コード', '$id']
+    });
 
-
-    if (resp.records.length === 0) return;
+    if (resp.records.length === 0) {
+      console.log("未採番レコードなし");
+      return;
+    }
 
     // 採番済みの最大番号を取得
     const maxResp = await kintone.api(kintone.api.url('/k/v1/records', true), 'GET', {
@@ -35,10 +37,18 @@
 
     // 採番されていないレコードに番号を付ける
     for (const [i, record] of resp.records.entries()) {
+      const recordId = record?.$id?.value;
+      if (!recordId) {
+        console.warn("レコードIDが取得できませんでした:", record);
+        continue;
+      }
+
       const newCode = '患者番号-' + String(nextNumber + i).padStart(5, '0');
+      console.log(`レコードID ${recordId} に ${newCode} を採番`);
+
       await kintone.api(kintone.api.url('/k/v1/record', true), 'PUT', {
         app: appId,
-        id: record.$id.value,
+        id: recordId,
         record: {
           患者コード: { value: newCode }
         }
