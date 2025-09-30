@@ -1,75 +1,54 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <title>未承認患者一覧</title>
-  <style>
-    table {
-      border-collapse: collapse;
-      width: 100%;
-    }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 8px;
-    }
-    th {
-      background-color: #f2f2a0;
-    }
-    .edit-button {
-      background-color: #4CAF50;
-      color: white;
-      padding: 6px 12px;
-      text-decoration: none;
-      border-radius: 4px;
-    }
-  </style>
-</head>
-<body>
-  <h2>未承認患者一覧</h2>
-  <table id="recordTable">
-    <thead>
-      <tr>
-        <th>氏名</th>
-        <th>病名</th>
-        <th>入院日</th>
-        <th>編集</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+(function () {
+  'use strict';
 
-  <script>
-    const appId = 22;
-    const apiToken = 'BbEoPJYxX0LLeOTsP9z0oNqzERdp80ozWttzeufX';
-    const formBridgeUrl = 'https://2b0d58d3.form.kintoneapp.com/public/bae4d386eeab10eb71c36381a4f253917c745d9efda595a075fa6fad89f25ded';
+  const appId = 22;
+  const apiToken = 'BbEoPJYxX0LLeOTsP9z0oNqzERdp80ozWttzeufX';
+  const formBridgeUrl = 'https://2b0d58d3.form.kintoneapp.com/public/bae4d386eeab10eb71c36381a4f253917c745d9efda595a075fa6fad89f25ded';
 
-    fetch(`https://neh926t6he9h.cybozu.com/k/v1/records.json?app=${appId}`, {
-      method: 'GET',
-      headers: {
-        'X-Cybozu-API-Token': apiToken,
-        'Content-Type': 'application/json'
-      }
-    })
-    .then(response => response.json())
-    .then(data => {
+  kintone.events.on('app.record.index.show', function () {
+    const container = document.createElement('div');
+    container.innerHTML = `
+      <h2>未承認患者一覧</h2>
+      <table id="recordTable" style="border-collapse: collapse; width: 100%;">
+        <thead>
+          <tr style="background-color: #f2f2a0;">
+            <th style="border: 1px solid #ccc; padding: 8px;">氏名</th>
+            <th style="border: 1px solid #ccc; padding: 8px;">病名</th>
+            <th style="border: 1px solid #ccc; padding: 8px;">入院日</th>
+            <th style="border: 1px solid #ccc; padding: 8px;">編集</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    `;
+    const space = document.querySelector('.gaia-argoui-app-index');
+    if (space) {
+      space.prepend(container);
+    }
+
+    const body = {
+      app: appId,
+      query: '院長サイン = "" or 院長サイン = "未承認"',
+      fields: ['氏名', '病名', '入院日', '院長サイン']
+    };
+
+    kintone.api(kintone.api.url('/k/v1/records', true), 'GET', body, function (resp) {
       const tbody = document.querySelector('#recordTable tbody');
-      data.records.forEach(record => {
-        const status = record['院長サイン']?.value;
-        if (!status || status === '未承認') {
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td>${record['氏名']?.value || ''}</td>
-            <td>${record['病名']?.value || ''}</td>
-            <td>${record['入院日']?.value || ''}</td>
-            <td><a class="edit-button" href="${formBridgeUrl}?record_id=${record.$id.value}" target="_blank">編集する</a></td>
-          `;
-          tbody.appendChild(tr);
-        }
+      resp.records.forEach(record => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="border: 1px solid #ccc; padding: 8px;">${record['氏名']?.value || ''}</td>
+          <td style="border: 1px solid #ccc; padding: 8px;">${record['病名']?.value || ''}</td>
+          <td style="border: 1px solid #ccc; padding: 8px;">${record['入院日']?.value || ''}</td>
+          <td style="border: 1px solid #ccc; padding: 8px;">
+            <a style="background-color: #4CAF50; color: white; padding: 6px 12px; text-decoration: none; border-radius: 4px;"
+               href="${formBridgeUrl}?record_id=${record.$id.value}" target="_blank">編集する</a>
+          </td>
+        `;
+        tbody.appendChild(tr);
       });
-    })
-    .catch(error => {
+    }, function (error) {
       console.error('取得エラー:', error);
     });
-  </script>
-</body>
-</html>
+  });
+})();
