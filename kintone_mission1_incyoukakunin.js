@@ -1,3 +1,5 @@
+console.log(OK);
+  
 (function () {
   'use strict';
 
