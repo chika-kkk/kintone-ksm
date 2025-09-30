@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
   console.log("表示OK");
 
-  const readonlyFields = ['氏名', '生年月日', '病名', '性別', 'ふりがな','入院日','担当看護師', '既往歴', 'メモ','担当医サイン', '担当医', '患者コード'];
+  const readonlyFields = ['氏名', '生年月日', '病名', '性別', 'ふりがな','入院日','担当看護師', '入院時写真' ,'既往歴', 'メモ','担当医サイン', '担当医', '患者コード'];
 
   readonlyFields.forEach(function (fieldCode) {
     // 通常のinput要素
