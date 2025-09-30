@@ -1,31 +1,75 @@
-const appId = 22;
-const apiToken = 'BbEoPJYxX0LLeOTsP9z0oNqzERdp80ozWttzeufX';
-const formBridgeUrl = 'https://2b0d58d3.form.kintoneapp.com/public/bae4d386eeab10eb71c36381a4f253917c745d9efda595a075fa6fad89f25ded';
-
-fetch(`https://neh926t6he9h.cybozu.com/k/v1/records.json?app=${appId}`, {
-  method: 'GET',
-  headers: {
-    'X-Cybozu-API-Token': apiToken,
-    'Content-Type': 'application/json'
-  }
-})
-.then(response => response.json())
-.then(data => {
-  const tbody = document.querySelector('#recordTable tbody');
-  data.records.forEach(record => {
-    const status = record['院長サイン']?.value;
-    if (!status || status === '未承認') {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${record['氏名']?.value || ''}</td>
-        <td>${record['病名']?.value || ''}</td>
-        <td>${record['入院日']?.value || ''}</td>
-        <td><a class="edit-button" href="${formBridgeUrl}?record_id=${record.$id.value}" target="_blank">編集する</a></td>
-      `;
-      tbody.appendChild(tr);
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>未承認患者一覧</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
     }
-  });
-})
-.catch(error => {
-  console.error('取得エラー:', error);
-});
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+    }
+    th {
+      background-color: #f2f2a0;
+    }
+    .edit-button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 6px 12px;
+      text-decoration: none;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h2>未承認患者一覧</h2>
+  <table id="recordTable">
+    <thead>
+      <tr>
+        <th>氏名</th>
+        <th>病名</th>
+        <th>入院日</th>
+        <th>編集</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const appId = 22;
+    const apiToken = 'BbEoPJYxX0LLeOTsP9z0oNqzERdp80ozWttzeufX';
+    const formBridgeUrl = 'https://2b0d58d3.form.kintoneapp.com/public/bae4d386eeab10eb71c36381a4f253917c745d9efda595a075fa6fad89f25ded';
+
+    fetch(`https://neh926t6he9h.cybozu.com/k/v1/records.json?app=${appId}`, {
+      method: 'GET',
+      headers: {
+        'X-Cybozu-API-Token': apiToken,
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      const tbody = document.querySelector('#recordTable tbody');
+      data.records.forEach(record => {
+        const status = record['院長サイン']?.value;
+        if (!status || status === '未承認') {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${record['氏名']?.value || ''}</td>
+            <td>${record['病名']?.value || ''}</td>
+            <td>${record['入院日']?.value || ''}</td>
+            <td><a class="edit-button" href="${formBridgeUrl}?record_id=${record.$id.value}" target="_blank">編集する</a></td>
+          `;
+          tbody.appendChild(tr);
+        }
+      });
+    })
+    .catch(error => {
+      console.error('取得エラー:', error);
+    });
+  </script>
+</body>
+</html>
