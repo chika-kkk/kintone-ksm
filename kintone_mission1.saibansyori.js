@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  console.log("接続OK");
+  console.log("OK");
 
   kintone.events.on('app.record.index.show', async function () {
     const appId = kintone.app.getId();
