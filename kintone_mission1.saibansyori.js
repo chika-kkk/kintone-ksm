@@ -1,3 +1,5 @@
+console.log("接続OK");
+
 kintone.events.on('app.record.index.show', async function () {
   const appId = kintone.app.getId();
 
