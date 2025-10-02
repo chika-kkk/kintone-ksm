@@ -77,10 +77,10 @@ function createCSV(matchedCodes) {
   }
 
   previewArea.innerHTML = `
-    <h3>CSVプレビュー</h3>
-    <pre>${csv}</pre>
-    <button id="downloadCSV">ダウンロード</button>
-  `;
+  <h3>CSVプレビュー</h3>
+  <pre>${csv}</pre>
+  <button id="downloadCSV">ダウンロード</button>
+`;
 
   const downloadBtn = document.getElementById("downloadCSV");
   downloadBtn.addEventListener("click", function() {
