@@ -61,11 +61,12 @@ function matchPatientCodes(patientList, medicalList) {
   return matched;
 }
 
-// CSV作成＋プレビュー＋ダウンロード＋閉じる
-function createCSV(matchedCodes) {
-  const csv = matchedCodes.join('\n');
-  console.log('CSV出力:\n' + csv);
+// 印刷用ボタン追加
+const recordModalButton = document.createElement("button");
+recordModalButton.textContent = "患者情報を印刷する！";
+document.body.appendChild(recordModalButton);
 
+recordModalButton.addEventListener("click", function() {
   // モーダル背景
   const overlay = document.createElement("div");
   overlay.style.position = "fixed";
@@ -79,7 +80,7 @@ function createCSV(matchedCodes) {
   overlay.style.justifyContent = "center";
   overlay.style.zIndex = "9999";
 
-  // 書類風の枠
+  // モーダル枠
   const modal = document.createElement("div");
   modal.style.backgroundColor = "#fff";
   modal.style.padding = "20px";
@@ -90,25 +91,65 @@ function createCSV(matchedCodes) {
   modal.style.overflowY = "auto";
 
   modal.innerHTML = `
-    <h2 style="margin-top:0;">CSVプレビュー</h2>
-    <pre style="background:#f9f9f9; padding:10px; border:1px solid #ccc;">${csv}</pre>
-    <button id="downloadCSV" style="margin-top:10px;">ダウンロード</button>
+    <h2>患者情報印刷</h2>
+    <label>患者コード: <input type="text" id="inputPatientCode"></label><br><br>
+    <label>カルテコード: <input type="text" id="inputMedicalCode"></label><br><br>
+    <button id="fetchRecord">取得</button>
+    <div id="recordPreview" style="margin-top:20px;"></div>
+    <button id="downloadCSV" style="margin-top:10px;">CSVダウンロード</button>
     <button id="closeModal" style="margin-left:10px;">閉じる</button>
   `;
 
   overlay.appendChild(modal);
   document.body.appendChild(overlay);
 
+  // 閉じる処理
+  document.getElementById("closeModal").addEventListener("click", function() {
+    overlay.remove();
+  });
+
+  // 取得処理
+  document.getElementById("fetchRecord").addEventListener("click", function() {
+    const patientCode = document.getElementById("inputPatientCode").value;
+    const medicalCode = document.getElementById("inputMedicalCode").value;
+
+    const query = `患者コード = "${patientCode}"`;
+    kintone.api(kintone.api.url('/k/v1/records', true), 'GET', {
+      app: 19,
+      query: query,
+      fields: ['氏名', '性別', '生年月日', '病名', '担当医']
+    }, function(resp) {
+      const record = resp.records[0];
+      if (!record) {
+        alert("患者情報が見つかりませんでした");
+        return;
+      }
+
+      const preview = `
+        <h3>患者情報</h3>
+        <p>氏名: ${record.氏名.value}</p>
+        <p>性別: ${record.性別.value}</p>
+        <p>生年月日: ${record.生年月日.value}</p>
+        <p>病名: ${record.病名.value}</p>
+        <p>担当医: ${record.担当医.value}</p>
+      `;
+      document.getElementById("recordPreview").innerHTML = preview;
+    });
+  });
+
   // ダウンロード処理
   document.getElementById("downloadCSV").addEventListener("click", function() {
-    const blob = new Blob([csv], { type: "text/csv" });
+    const previewText = document.getElementById("recordPreview").innerText;
+    const blob = new Blob([previewText], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "matched_patient_codes.csv";
+    a.download = "patient_info.csv";
     a.click();
     URL.revokeObjectURL(url);
   });
+});
+
 
   // 閉じる処理
   document.getElementById("closeModal").addEventListener("click", function() {
