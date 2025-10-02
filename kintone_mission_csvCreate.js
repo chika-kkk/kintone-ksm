@@ -87,10 +87,15 @@ function createCSV(matchedCodes) {
   previewArea.appendChild(closeBtn);
 }
 
+
+let select; // グローバルに定義
 // ドロップダウン作成
-const select = document.createElement("select");
-select.id = "patientDropdown";
-document.body.appendChild(select);
+function setupDropdown() {
+  select = document.createElement("select");
+  select.id = "patientDropdown";
+  document.body.appendChild(select);
+}
+
 
 // ボタン作成
 const csvCreateButton = document.createElement("button");
@@ -99,10 +104,10 @@ document.body.appendChild(csvCreateButton);
 
 // ボタン押下時の処理
 csvCreateButton.addEventListener("click", function() {
-  if (!select || !select.value) {
-    alert("患者コードを選択してください");
-    return;
-  }
+  if (!select || typeof select.value === 'undefined') {
+  alert("患者コードを選択してください");
+  return;
+}
   const selectedCode = select.value;
   const matched = matchPatientCodes([selectedCode], medicalList);
   createCSV(matched);
