@@ -1,4 +1,4 @@
-console.log("ok");
+console.log("o");
 
 const patientInfoAppId = 19;
 const medicalRecordAppId = 20;
@@ -61,10 +61,8 @@ function matchPatientCodes(patientList, medicalList) {
   return matched;
 }
 
-// CSV作成＋モーダル表示
 function createCSV(matchedCodes) {
-  const csv = matchedCodes.join('\n');
-  console.log('CSV出力:\n' + csv);
+  const selectedCode = matchedCodes[0]; // 単一選択前提
 
   // モーダル背景
   const overlay = document.createElement("div");
@@ -85,37 +83,102 @@ function createCSV(matchedCodes) {
   modal.style.padding = "20px";
   modal.style.borderRadius = "8px";
   modal.style.boxShadow = "0 4px 12px rgba(0,0,0,0.3)";
-  modal.style.width = "500px";
+  modal.style.width = "600px";
   modal.style.maxHeight = "80%";
   modal.style.overflowY = "auto";
+  modal.innerHTML = `<h2 style="margin-top:0;">患者情報とカルテ</h2><p>読み込み中...</p>`;
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
 
-  modal.innerHTML = `
-    <h2 style="margin-top:0;">CSVプレビュー</h2>
-    <pre style="background:#f9f9f9; padding:10px; border:1px solid #ccc;">${csv}</pre>
-    <button id="downloadCSV" style="margin-top:10px;">ダウンロード</button>
-    <button id="closeModal" style="margin-left:10px;">閉じる</button>
-  `;
+  // 閉じるボタン（先に定義しておく）
+  const closeBtn = document.createElement("button");
+  closeBtn.textContent = "閉じる";
+  closeBtn.style.marginTop = "10px";
+  closeBtn.addEventListener("click", () => overlay.remove());
+
+
 
   overlay.appendChild(modal);
   document.body.appendChild(overlay);
 
-  // ダウンロード処理
-  document.getElementById("downloadCSV").addEventListener("click", function() {
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "matched_patient_codes.csv";
-    a.click();
-    URL.revokeObjectURL(url);
-  });
+ // 患者情報取得
+  const patientQuery = `患者コード = "${selectedCode}"`;
+  kintone.api(kintone.api.url('/k/v1/records', true), 'GET', {
+    app: 19,
+    query: patientQuery,
+    fields: ['氏名', '性別', '生年月日', '病名', '担当医', '担当看護師', '承認日時', '担当医サイン', '承認済']
+  }, function(patientResp) {
+    const patient = patientResp.records[0];
+    if (!patient) {
+      modal.innerHTML = `<p>患者情報が見つかりませんでした</p>`;
+      modal.appendChild(closeBtn);
+      return;
+    }
 
-  // 閉じる処理
-  document.getElementById("closeModal").addEventListener("click", function() {
-    overlay.remove();
+    // カルテ情報取得
+    const medicalQuery = `患者コード = "${selectedCode}"`;
+    kintone.api(kintone.api.url('/k/v1/records', true), 'GET', {
+      app: 20,
+      query: medicalQuery,
+      fields: ['診療日', '処方', 'メモ']
+    }, function(medicalResp) {
+      const medical = medicalResp.records[0];
+
+      const html = `
+        <h3>患者情報</h3>
+        <p>氏名: ${patient.氏名.value}</p>
+        <p>性別: ${patient.性別.value}</p>
+        <p>生年月日: ${patient.生年月日.value}</p>
+        <p>病名: ${patient.病名.value}</p>
+        <p>担当医: ${patient.担当医.value}</p>
+        <p>担当看護師: ${patient.担当看護師.value}</p>
+        <p>承認日時: ${patient.承認日時.value}</p>
+        <p>担当医サイン: ${patient.担当医サイン.value}</p>
+        <p>承認済: ${patient.承認済.value}</p>
+        <h3>カルテ情報</h3>
+        ${medical ? `
+          <p>診療日: ${medical.診療日.value}</p>
+          <p>処方: ${medical.処方.value}</p>
+          <p>メモ: ${medical.メモ.value}</p>
+        ` : `<p>カルテ情報が見つかりませんでした</p>`}
+      `;
+
+      modal.innerHTML = html;
+
+      // CSVダウンロードボタン
+      const downloadBtn = document.createElement("button");
+      downloadBtn.textContent = "CSVダウンロード";
+      downloadBtn.style.marginTop = "10px";
+      downloadBtn.addEventListener("click", function() {
+        const csvText = [
+          `氏名,${patient.氏名.value}`,
+          `性別,${patient.性別.value}`,
+          `生年月日,${patient.生年月日.value}`,
+          `病名,${patient.病名.value}`,
+          `担当医,${patient.担当医.value}`,
+          `担当看護師,${patient.担当看護師.value}`,
+          `承認日時,${patient.承認日時.value}`,
+          `担当医サイン,${patient.担当医サイン.value}`,
+          `承認済,${patient.承認済.value}`,
+          medical ? `診療日,${medical.診療日.value}` : '',
+          medical ? `処方,${medical.処方.value}` : '',
+          medical ? `メモ,${medical.メモ.value}` : ''
+        ].filter(line => line).join('\n');
+
+        const blob = new Blob([csvText], { type: "text/csv" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "patient_full_info.csv";
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+
+      modal.appendChild(downloadBtn);
+      modal.appendChild(closeBtn);
+    });
   });
 }
-
 // ボタン作成
 const csvCreateButton = document.createElement("button");
 csvCreateButton.textContent = "CSV作成する！";
