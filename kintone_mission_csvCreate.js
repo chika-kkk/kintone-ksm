@@ -96,7 +96,6 @@ function setupDropdown() {
   document.body.appendChild(select);
 }
 
-
 // ボタン作成
 const csvCreateButton = document.createElement("button");
 csvCreateButton.textContent = "CSV作成する！";
