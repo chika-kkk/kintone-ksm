@@ -1,9 +1,10 @@
-const patientDetaAppId = 19;
+const patientInfoAppId = 19;
 const medicalRecordAppId = 20;
 
 let patientList = [];
 let medicalList = [];
 
+// 患者コード取得
 function fetchPatientCodes(callback) {
   kintone.api(kintone.api.url('/k/v1/records', true), 'GET', {
     app: patientInfoAppId,
@@ -11,42 +12,7 @@ function fetchPatientCodes(callback) {
   }, callback);
 }
 
-function handlePatientData(resp) {
-  const records = resp.records;
-  patientList = records.map(r => r.患者コード.value);
-  console.log('患者コード一覧:', patientList);
-}
-
-kintone.api(kintone.api.url('/k/v1/records', true), 'GET', {
-  app: medicalRecordAppId,
-  fields: ['患者コード']
-}, function(resp) {
-  const records = resp.records;
-   medicalList = records.map(r => {
-    const code = r.患者コード.value;
-    console.log('カルテ側の患者コード:', code);
-    return code;
-  });
-});
-
-function matchPatientCodes(patientList, medicalList) {
-  const matched = patientList.filter(code => medicalList.includes(code));
-  console.log('照合済みの患者コード:', matched);
-  return matched;
-}
-
-
-function createCSV(matchedCodes) {
-  const csv = matchedCodes.join('\n');
-  console.log('CSV出力:\n' + csv);
-  // ここでダウンロード処理を追加してもOK
-}
-
-const select = document.createElement("select");
-select.id = "patientDropdown";
-document.body.appendChild(select);
-
-// 患者コードを取得後→追加
+// 患者コード処理
 function handlePatientData(resp) {
   const records = resp.records;
   patientList = records.map(r => r.患者コード.value);
@@ -60,14 +26,31 @@ function handlePatientData(resp) {
   });
 }
 
-const csvCreateButton = document.createElement("button");
-csvCreateButton.textContent = "CSV作成する！";
+// カルテ側の患者コード取得
+kintone.api(kintone.api.url('/k/v1/records', true), 'GET', {
+  app: medicalRecordAppId,
+  fields: ['患者コード']
+}, function(resp) {
+  const records = resp.records;
+  medicalList = records.map(r => {
+    const code = r.患者コード.value;
+    console.log('カルテ側の患者コード:', code);
+    return code;
+  });
+});
 
+// 照合処理
+function matchPatientCodes(patientList, medicalList) {
+  const matched = patientList.filter(code => medicalList.includes(code));
+  console.log('照合済みの患者コード:', matched);
+  return matched;
+}
+
+// CSV作成＋プレビュー＋ダウンロード＋閉じる
 function createCSV(matchedCodes) {
   const csv = matchedCodes.join('\n');
   console.log('CSV出力:\n' + csv);
 
-  // プレビュー枠を探す or なければ作る
   let previewArea = document.getElementById("csvPreview");
   if (!previewArea) {
     previewArea = document.createElement("div");
@@ -78,14 +61,12 @@ function createCSV(matchedCodes) {
     document.body.appendChild(previewArea);
   }
 
-  // プレビュー内容を表示
   previewArea.innerHTML = `
     <h3>CSVプレビュー</h3>
     <pre>${csv}</pre>
     <button id="downloadCSV">ダウンロード</button>
   `;
 
-  // ダウンロード処理を追加
   const downloadBtn = document.getElementById("downloadCSV");
   downloadBtn.addEventListener("click", function() {
     const blob = new Blob([csv], { type: "text/csv" });
@@ -96,22 +77,36 @@ function createCSV(matchedCodes) {
     a.click();
     URL.revokeObjectURL(url);
   });
+
+  const closeBtn = document.createElement("button");
+  closeBtn.textContent = "閉じる";
+  closeBtn.style.marginTop = "10px";
+  closeBtn.addEventListener("click", () => {
+    previewArea.remove();
+  });
+  previewArea.appendChild(closeBtn);
 }
 
+// ドロップダウン作成
+const select = document.createElement("select");
+select.id = "patientDropdown";
+document.body.appendChild(select);
 
-//ボタンを押したときの処理
-//患者コードがカルテ側にも存在するかチェックして、一致したコードをに返す
+// ボタン作成
+const csvCreateButton = document.createElement("button");
+csvCreateButton.textContent = "CSV作成する！";
+document.body.appendChild(csvCreateButton);
+
+// ボタン押下時の処理
 csvCreateButton.addEventListener("click", function() {
+  if (!select || !select.value) {
+    alert("患者コードを選択してください");
+    return;
+  }
   const selectedCode = select.value;
   const matched = matchPatientCodes([selectedCode], medicalList);
   createCSV(matched);
 });
-document.body.appendChild(csvCreateButton);
 
-//閉じるボタン
-const closeBtn = document.createElement("button");
-closeBtn.textContent = "閉じる";
-closeBtn.addEventListener("click", () => {
-  previewArea.remove();
-});
-previewArea.appendChild(closeBtn);
+// 患者コード取得を実行
+fetchPatientCodes(handlePatientData);
