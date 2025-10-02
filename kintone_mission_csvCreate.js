@@ -316,4 +316,3 @@ csvCreateButton.addEventListener("click", function() {
 setupDropdown();
 fetchPatientCodes(handlePatientData);
 */
-*/
