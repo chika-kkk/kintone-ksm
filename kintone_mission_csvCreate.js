@@ -1,4 +1,4 @@
-console.log("ｋ");
+console.log("ｋｋ");
 
 const patientInfoAppId = 19;
 const medicalRecordAppId = 20;
@@ -65,7 +65,6 @@ function matchPatientCodes(patientList, medicalList) {
 const recordModalButton = document.createElement("button");
 recordModalButton.textContent = "csvを選択する！";
 document.body.appendChild(recordModalButton);
-const patientCode = document.getElementById("modalPatientSelect").value;
 
 recordModalButton.addEventListener("click", function() {
   // モーダル背景
