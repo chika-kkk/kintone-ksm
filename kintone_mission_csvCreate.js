@@ -116,5 +116,3 @@ csvCreateButton.addEventListener("click", function() {
 // 患者コード取得を実行
 setupDropdown();
 fetchPatientCodes(handlePatientData);
-
-fetchPatientCodes(handlePatientData);
