@@ -40,7 +40,7 @@ function handlePatientData(resp) {
   fetchMedicalData(function(resp) {
       const records = resp.records;
       medicalList = records.map(r => {
-          const code = r.患者コード.value;
+          const code = r['患者コード'].value;
           console.log('カルテ側の患者コード:', code);
           return code;
       });
