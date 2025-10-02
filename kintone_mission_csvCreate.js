@@ -1,4 +1,4 @@
-console.log("００");
+console.log("０");
 
 const patientInfoAppId = 19;
 const medicalRecordAppId = 20;
@@ -106,7 +106,7 @@ function createCSV(matchedCodes) {
   kintone.api(kintone.api.url('/k/v1/records', true), 'GET', {
     app: 19,
     query: patientQuery,
-    fields: ['氏名', '性別', '生年月日', '病名', '担当医', '担当看護師', '承認日時', '担当医サイン', '承認欄']
+    fields: ['氏名', '性別', '生年月日', '病名', '担当医', '担当看護師', '承認日時', '担当医サイン']
   }, function(patientResp) {
     const patient = patientResp.records[0];
     if (!patient) {
@@ -134,7 +134,6 @@ function createCSV(matchedCodes) {
         <p>担当看護師: ${patient.担当看護師.value}</p>
         <p>承認日時: ${patient.承認日時.value}</p>
         <p>担当医サイン: ${patient.担当医サイン.value}</p>
-        <p>承認欄: ${patient.承認欄.value}</p>
         <h3>カルテ情報</h3>
         ${medical ? `
           <p>病名: ${medical.病名.value}</p>
@@ -162,7 +161,6 @@ function createCSV(matchedCodes) {
           `担当看護師,${patient.担当看護師.value}`,
           `承認日時,${patient.承認日時.value}`,
           `担当医サイン,${patient.担当医サイン.value}`,
-          `承認欄,${patient.承認欄.value}`,
           medical ? `病名,${medical.病名.value}` : '',
           medical ? `体温,${medical.体温.value}` : '',
           medical ? `脈,${medical.脈.value}` : '',
