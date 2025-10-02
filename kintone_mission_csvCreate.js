@@ -109,3 +109,11 @@ csvCreateButton.addEventListener("click", function() {
   createCSV(matched);
 });
 document.body.appendChild(csvCreateButton);
+
+//閉じるボタン
+const closeBtn = document.createElement("button");
+closeBtn.textContent = "閉じる";
+closeBtn.addEventListener("click", () => {
+  previewArea.remove();
+});
+previewArea.appendChild(closeBtn);
