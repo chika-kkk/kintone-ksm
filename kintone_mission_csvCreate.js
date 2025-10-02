@@ -155,7 +155,6 @@ recordModalButton.addEventListener("click", function() {
   document.getElementById("closeModal").addEventListener("click", function() {
     overlay.remove();
   });
-}
 
 // ボタン作成
 const csvCreateButton = document.createElement("button");
