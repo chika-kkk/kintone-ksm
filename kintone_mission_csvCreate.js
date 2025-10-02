@@ -16,7 +16,7 @@ function fetchPatientCodes(callback) {
 function fetchMedicalData(callback) {
     kintone.api(kintone.api.url('/k/v1/records', true), 'GET', {
         app: medicalRecordAppId,
-        fields: ['患者コード']
+        fields: ['患者番号']
     }, callback);
 }
 
@@ -40,7 +40,7 @@ function handlePatientData(resp) {
   fetchMedicalData(function(resp) {
       const records = resp.records;
       medicalList = records.map(r => {
-          const code = r['患者コード'].value;
+          const code = r['患者番号'].value;
           console.log('カルテ側の患者コード:', code);
           return code;
       });
