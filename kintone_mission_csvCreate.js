@@ -23,7 +23,7 @@ function fetchMedicalData(callback) {
 // 患者コード処理 (ここに次の非同期処理を組み込み、順番を保証する)
 function handlePatientData(resp) {
   const records = resp.records;
-  patientList = records.map(r => r.患者コード.value);
+  patientList = records.map(r => r['患者コード'].value);
   console.log('患者コード一覧:', patientList);
 
   patientList.forEach(code => {
