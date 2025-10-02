@@ -66,24 +66,41 @@ function createCSV(matchedCodes) {
   const csv = matchedCodes.join('\n');
   console.log('CSV出力:\n' + csv);
 
-  let previewArea = document.getElementById("csvPreview");
-  if (!previewArea) {
-    previewArea = document.createElement("div");
-    previewArea.id = "csvPreview";
-    previewArea.style.border = "1px solid #ccc";
-    previewArea.style.padding = "10px";
-    previewArea.style.marginTop = "10px";
-    document.body.appendChild(previewArea);
-  }
+  // モーダル背景
+  const overlay = document.createElement("div");
+  overlay.style.position = "fixed";
+  overlay.style.top = "0";
+  overlay.style.left = "0";
+  overlay.style.width = "100%";
+  overlay.style.height = "100%";
+  overlay.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+  overlay.style.display = "flex";
+  overlay.style.alignItems = "center";
+  overlay.style.justifyContent = "center";
+  overlay.style.zIndex = "9999";
 
-  previewArea.innerHTML = `
-  <h3>CSVプレビュー</h3>
-  <pre>${csv}</pre>
-  <button id="downloadCSV">ダウンロード</button>
-`;
+  // 書類風の枠
+  const modal = document.createElement("div");
+  modal.style.backgroundColor = "#fff";
+  modal.style.padding = "20px";
+  modal.style.borderRadius = "8px";
+  modal.style.boxShadow = "0 4px 12px rgba(0,0,0,0.3)";
+  modal.style.width = "500px";
+  modal.style.maxHeight = "80%";
+  modal.style.overflowY = "auto";
 
-  const downloadBtn = document.getElementById("downloadCSV");
-  downloadBtn.addEventListener("click", function() {
+  modal.innerHTML = `
+    <h2 style="margin-top:0;">CSVプレビュー</h2>
+    <pre style="background:#f9f9f9; padding:10px; border:1px solid #ccc;">${csv}</pre>
+    <button id="downloadCSV" style="margin-top:10px;">ダウンロード</button>
+    <button id="closeModal" style="margin-left:10px;">閉じる</button>
+  `;
+
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+
+  // ダウンロード処理
+  document.getElementById("downloadCSV").addEventListener("click", function() {
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -93,13 +110,10 @@ function createCSV(matchedCodes) {
     URL.revokeObjectURL(url);
   });
 
-  const closeBtn = document.createElement("button");
-  closeBtn.textContent = "閉じる";
-  closeBtn.style.marginTop = "10px";
-  closeBtn.addEventListener("click", () => {
-    previewArea.remove();
+  // 閉じる処理
+  document.getElementById("closeModal").addEventListener("click", function() {
+    overlay.remove();
   });
-  previewArea.appendChild(closeBtn);
 }
 
 // ボタン作成
