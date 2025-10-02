@@ -165,7 +165,7 @@ function createCSV(matchedCodes) {
           `承認欄,${patient.承認欄.value}`,
           medical ? `病名,${medical.病名.value}` : '',
           medical ? `体温,${medical.体温.value}` : '',
-          medical ? `脈,${medical.脈.value}` : ''
+          medical ? `脈,${medical.脈.value}` : '',
           medical ? `収縮期血圧,${medical.収縮期血圧.value}` : '',
           medical ? `拡張期血圧,${medical.拡張期血圧.value}` : '',
           medical ? `呼吸数,${medical.呼吸数.value}` : ''
