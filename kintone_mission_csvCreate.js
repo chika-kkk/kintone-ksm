@@ -6,7 +6,7 @@ let medicalList = [];
 
 function fetchPatientCodes(callback) {
   kintone.api(kintone.api.url('/k/v1/records', true), 'GET', {
-    app: patientInfoAppID,
+    app: patientInfoAppId,
     fields: ['患者コード']
   }, callback);
 }
@@ -18,7 +18,7 @@ function handlePatientData(resp) {
 }
 
 kintone.api(kintone.api.url('/k/v1/records', true), 'GET', {
-  app: medicalRecordAppID,
+  app: medicalRecordAppId,
   fields: ['患者コード']
 }, function(resp) {
   const records = resp.records;
