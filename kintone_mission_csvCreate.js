@@ -1,4 +1,4 @@
-console.log("ｋｋ");
+console.log("ｋ");
 
 const patientInfoAppId = 19;
 const medicalRecordAppId = 20;
@@ -155,11 +155,6 @@ recordModalButton.addEventListener("click", function() {
   });
 });
 
-
-  // 閉じる処理
-  document.getElementById("closeModal").addEventListener("click", function() {
-    overlay.remove();
-  });
 
 // ボタン作成
 const csvCreateButton = document.createElement("button");
