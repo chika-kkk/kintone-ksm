@@ -1,4 +1,4 @@
-console.log("oｋ");
+console.log("ｋ");
 
 const patientInfoAppId = 19;
 const medicalRecordAppId = 20;
@@ -63,8 +63,9 @@ function matchPatientCodes(patientList, medicalList) {
 
 // 印刷用ボタン追加
 const recordModalButton = document.createElement("button");
-recordModalButton.textContent = "患者情報を印刷する！";
+recordModalButton.textContent = "csvを選択する！";
 document.body.appendChild(recordModalButton);
+const patientCode = document.getElementById("modalPatientSelect").value;
 
 recordModalButton.addEventListener("click", function() {
   // モーダル背景
@@ -91,14 +92,19 @@ recordModalButton.addEventListener("click", function() {
   modal.style.overflowY = "auto";
 
   modal.innerHTML = `
-    <h2>患者情報印刷</h2>
-    <label>患者コード: <input type="text" id="inputPatientCode"></label><br><br>
-    <label>カルテコード: <input type="text" id="inputMedicalCode"></label><br><br>
-    <button id="fetchRecord">取得</button>
-    <div id="recordPreview" style="margin-top:20px;"></div>
-    <button id="downloadCSV" style="margin-top:10px;">CSVダウンロード</button>
-    <button id="closeModal" style="margin-left:10px;">閉じる</button>
-  `;
+  <h2>患者情報印刷</h2>
+  <label>患者コード: 
+    <select id="modalPatientSelect">
+      ${patientList.map(code => `<option value="${code}">${code}</option>`).join('')}
+    </select>
+  </label><br><br>
+  <label>カルテコード: <input type="text" id="inputMedicalCode"></label><br><br>
+  <button id="fetchRecord">取得</button>
+  <div id="recordPreview" style="margin-top:20px;"></div>
+  <button id="downloadCSV" style="margin-top:10px;">CSVダウンロード</button>
+  <button id="closeModal" style="margin-left:10px;">閉じる</button>
+`;
+
 
   overlay.appendChild(modal);
   document.body.appendChild(overlay);
