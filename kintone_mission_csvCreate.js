@@ -190,4 +190,24 @@ function createCSV(matchedCodes) {
 
     const csvCreateButton = document.createElement("button");
     csvCreateButton.id = "csvCreateButton";
-    csvCreateButton.textContent = "CSV
+    csvCreateButton.textContent = "CSV作成する！";
+
+    setupDropdown(); // ドロップダウン要素を作成
+
+    container.appendChild(csvCreateButton);
+    container.appendChild(select);
+    headerSpace.appendChild(container);
+
+    fetchPatientCodes(handlePatientData);
+
+    csvCreateButton.addEventListener("click", function() {
+      if (!select || typeof select.value === 'undefined') {
+        alert("患者コードを選択してください");
+        return;
+      }
+      const selectedCode = select.value;
+      const matched = matchPatientCodes([selectedCode], medicalList);
+      createCSV(matched);
+    });
+  });
+})();
