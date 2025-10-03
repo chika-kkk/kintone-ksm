@@ -1,4 +1,4 @@
-console.log("読込");
+console.log("OK");
 
 const patientInfoAppId = 19;
 const medicalRecordAppId = 20;
@@ -178,20 +178,32 @@ function createCSV(matchedCodes) {
   });
 }
 
-// 「CSV作成する！」ボタン
-const csvCreateButton = document.createElement("button");
-csvCreateButton.textContent = "CSV作成する！";
-document.body.appendChild(csvCreateButton);
+(function() {
+  "use strict";
 
-csvCreateButton.addEventListener("click", function() {
-  if (!select || typeof select.value === 'undefined') {
-    alert("患者コードを選択してください");
-    return;
-  }
-  const selectedCode = select.value;
-  const matched = matchPatientCodes([selectedCode], medicalList);
-  createCSV(matched);
-});
+  kintone.events.on('app.record.index.show', function() {
+    if (document.getElementById("csvCreateButton")) return;
+
+    const csvCreateButton = document.createElement("button");
+    csvCreateButton.id = "csvCreateButton";
+    csvCreateButton.textContent = "CSV作成する！";
+    csvCreateButton.style.marginRight = "10px";
+
+    const headerSpace = kintone.app.getHeaderMenuSpaceElement();
+    headerSpace.appendChild(csvCreateButton);
+
+    csvCreateButton.addEventListener("click", function() {
+      if (!select || typeof select.value === 'undefined') {
+        alert("患者コードを選択してください");
+        return;
+      }
+      const selectedCode = select.value;
+      const matched = matchPatientCodes([selectedCode], medicalList);
+      createCSV(matched);
+    });
+  });
+})();
+
 
 // 初期化
 setupDropdown();
