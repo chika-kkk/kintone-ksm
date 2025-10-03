@@ -37,3 +37,27 @@
     kintone.app.record.getHeaderMenuSpaceElement().appendChild(button);
   });
 })();
+
+kintone.events.on('app.record.detail.show', async function(event) {
+  const record = event.record;
+  const file = record['添付ファイル'].value[0]; // フィールドコードは自分のに合わせてね
+  const fileKey = file.fileKey;
+
+  const headers = {
+    'X-Requested-With': 'XMLHttpRequest'
+  };
+
+  try {
+    const resp = await fetch(`/k/v1/file.json?fileKey=${fileKey}`, {
+      method: 'GET',
+      headers: headers
+    });
+    const blob = await resp.blob();
+    console.log('ファイル取得成功！', blob);
+    // ここでBoxへのアップロード処理に進めるよ
+  } catch (err) {
+    console.error('ファイル取得失敗', err);
+  }
+
+  return event;
+});
