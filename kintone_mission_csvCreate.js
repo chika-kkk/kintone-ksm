@@ -5,7 +5,7 @@ const medicalRecordAppId = 20;
 
 let patientList = [];
 let medicalList = [];
-let select; // グローバルに定義
+let select;
 
 // ドロップダウン作成
 function setupDropdown() {
@@ -47,11 +47,8 @@ kintone.api(kintone.api.url('/k/v1/records', true), 'GET', {
   fields: ['患者コード']
 }, function(resp) {
   const records = resp.records;
-  medicalList = records.map(r => {
-    const code = r.患者コード.value;
-    console.log('カルテ側の患者コード:', code);
-    return code;
-  });
+  medicalList = records.map(r => r.患者コード.value);
+  console.log('カルテ側の患者コード:', medicalList);
 });
 
 // 照合処理
@@ -62,9 +59,8 @@ function matchPatientCodes(patientList, medicalList) {
 }
 
 function createCSV(matchedCodes) {
-  const selectedCode = matchedCodes[0]; // 単一選択前提
+  const selectedCode = matchedCodes[0];
 
-  // モーダル背景
   const overlay = document.createElement("div");
   overlay.style.position = "fixed";
   overlay.style.top = "0";
@@ -77,7 +73,6 @@ function createCSV(matchedCodes) {
   overlay.style.justifyContent = "center";
   overlay.style.zIndex = "9999";
 
-  // モーダル枠
   const modal = document.createElement("div");
   modal.style.backgroundColor = "#fff";
   modal.style.padding = "20px";
@@ -90,19 +85,29 @@ function createCSV(matchedCodes) {
   overlay.appendChild(modal);
   document.body.appendChild(overlay);
 
-  // 閉じるボタン
+  // ボタン作成
+  const downloadBtn = document.createElement("button");
+  downloadBtn.textContent = "CSVダウンロード";
+  downloadBtn.style.marginTop = "10px";
+
   const closeBtn = document.createElement("button");
   closeBtn.textContent = "閉じる";
   closeBtn.style.marginTop = "10px";
   closeBtn.addEventListener("click", () => overlay.remove());
 
-  overlay.appendChild(modal);
-  document.body.appendChild(overlay);
+  // ボタンコンテナ
+  const buttonContainer = document.createElement("div");
+  buttonContainer.style.display = "flex";
+  buttonContainer.style.justifyContent = "flex-end";
+  buttonContainer.style.gap = "10px";
+  buttonContainer.style.marginBottom = "10px";
+  buttonContainer.appendChild(downloadBtn);
+  buttonContainer.appendChild(closeBtn);
 
- // 患者情報取得
+  // 患者情報取得
   const patientQuery = `患者コード = "${selectedCode}"`;
   kintone.api(kintone.api.url('/k/v1/records', true), 'GET', {
-    app: 19,
+    app: patientInfoAppId,
     query: patientQuery,
     fields: ['氏名', '性別', '生年月日', '病名', '担当医', '担当看護師', '承認日時', '担当医サイン']
   }, function(patientResp) {
@@ -113,57 +118,44 @@ function createCSV(matchedCodes) {
       return;
     }
 
-    // カルテ情報取得
     const medicalQuery = `患者コード = "${selectedCode}" order by 日付 desc limit 1`;
-
-kintone.api(kintone.api.url('/k/v1/records', true), 'GET', {
-  app: 20,
-  query: medicalQuery,
-  fields: ['病名', '体温', '脈', '収縮期血圧', '拡張期血圧', '呼吸数', '日付']
-}, function(medicalResp) {
-  const medical = medicalResp.records[0];
-  console.log("最新のカルテ:", medical);
+    kintone.api(kintone.api.url('/k/v1/records', true), 'GET', {
+      app: medicalRecordAppId,
+      query: medicalQuery,
+      fields: ['病名', '体温', '脈', '収縮期血圧', '拡張期血圧', '呼吸数', '日付']
+    }, function(medicalResp) {
+      const medical = medicalResp.records[0];
+      console.log("最新のカルテ:", medical);
 
       fetch("https://chika-kkk.github.io/kintone-ksm/kintone_mission1popupTemplate.html")
-  .then(res => res.text())
-  .then(html => {
-    modal.innerHTML = html;
+        .then(res => res.text())
+        .then(html => {
+          modal.innerHTML = html;
+          modal.prepend(buttonContainer);
 
-   console.log(selectedCode);
-    console.log(medical);
+          document.getElementById("氏名").textContent = patient.氏名.value;
+          document.getElementById("性別").textContent = patient.性別.value;
+          document.getElementById("生年月日").textContent = patient.生年月日.value;
+          document.getElementById("病名").textContent = patient.病名.value;
+          document.getElementById("体温").textContent = medical?.体温?.value || "未記録";
+          document.getElementById("脈").textContent = medical?.脈?.value || "未記録";
+          document.getElementById("収縮期血圧").textContent = medical?.収縮期血圧?.value || "未記録";
+          document.getElementById("拡張期血圧").textContent = medical?.拡張期血圧?.value || "未記録";
+          document.getElementById("呼吸数").textContent = medical?.呼吸数?.value || "未記録";
+          document.getElementById("担当医").textContent = patient.担当医.value[0]?.name || "未設定";
+          document.getElementById("担当看護師").textContent = patient.担当看護師.value[0]?.name || "未設定";
+          document.getElementById("承認日時").textContent = patient.承認日時.value;
+          document.getElementById("担当医サイン").textContent = patient.担当医サイン.value;
+        });
 
-    
-    // データを埋め込む
-    document.getElementById("氏名").textContent = patient.氏名.value;
-    document.getElementById("性別").textContent = patient.性別.value;
-    document.getElementById("生年月日").textContent = patient.生年月日.value;
-    document.getElementById("病名").textContent = patient.病名.value;
-    document.getElementById("体温").textContent = medical.体温?.value || "未記録";
-　　document.getElementById("脈").textContent = medical.脈?.value || "未記録";
-　　document.getElementById("収縮期血圧").textContent = medical.収縮期血圧?.value || "未記録";
-　　document.getElementById("拡張期血圧").textContent = medical.拡張期血圧?.value || "未記録";
-　　document.getElementById("呼吸数").textContent = medical.呼吸数?.value || "未記録";
-    document.getElementById("担当医").textContent = patient.担当医.value[0]?.name;
-    document.getElementById("担当看護師").textContent = patient.担当看護師.value[0]?.name;
-    document.getElementById("承認日時").textContent = patient.承認日時.value;
-    document.getElementById("担当医サイン").textContent = patient.担当医サイン.value;
-
-    modal.appendChild(downloadBtn);
-    modal.appendChild(closeBtn);
-  });
-
-      // CSVダウンロードボタン
-      const downloadBtn = document.createElement("button");
-      downloadBtn.textContent = "CSVダウンロード";
-      downloadBtn.style.marginTop = "10px";
       downloadBtn.addEventListener("click", function() {
         const csvText = [
           `氏名,${patient.氏名.value}`,
           `性別,${patient.性別.value}`,
           `生年月日,${patient.生年月日.value}`,
           `病名,${patient.病名.value}`,
-          `担当医,${patient.担当医.value}`,
-          `担当看護師,${patient.担当看護師.value}`,
+          `担当医,${patient.担当医.value[0]?.name || ""}`,
+          `担当看護師,${patient.担当看護師.value[0]?.name || ""}`,
           `承認日時,${patient.承認日時.value}`,
           `担当医サイン,${patient.担当医サイン.value}`,
           medical ? `病名,${medical.病名.value}` : '',
@@ -182,18 +174,15 @@ kintone.api(kintone.api.url('/k/v1/records', true), 'GET', {
         a.click();
         URL.revokeObjectURL(url);
       });
-
-      modal.appendChild(downloadBtn);
-      modal.appendChild(closeBtn);
     });
   });
 }
-// ボタン作成
+
+// 「CSV作成する！」ボタン
 const csvCreateButton = document.createElement("button");
 csvCreateButton.textContent = "CSV作成する！";
 document.body.appendChild(csvCreateButton);
 
-// ボタン押下時の処理
 csvCreateButton.addEventListener("click", function() {
   if (!select || typeof select.value === 'undefined') {
     alert("患者コードを選択してください");
@@ -207,5 +196,3 @@ csvCreateButton.addEventListener("click", function() {
 // 初期化
 setupDropdown();
 fetchPatientCodes(handlePatientData);
-
-
