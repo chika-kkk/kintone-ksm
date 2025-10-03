@@ -141,8 +141,6 @@ function createCSV(matchedCodes) {
     modal.appendChild(closeBtn);
   });
 
-      modal.innerHTML = html;
-
       // CSVダウンロードボタン
       const downloadBtn = document.createElement("button");
       downloadBtn.textContent = "CSVダウンロード";
