@@ -129,6 +129,10 @@ kintone.api(kintone.api.url('/k/v1/records', true), 'GET', {
   .then(html => {
     modal.innerHTML = html;
 
+   console.log(selectedCode);
+    console.log(medical);
+
+    
     // データを埋め込む
     document.getElementById("氏名").textContent = patient.氏名.value;
     document.getElementById("性別").textContent = patient.性別.value;
@@ -199,5 +203,4 @@ csvCreateButton.addEventListener("click", function() {
 setupDropdown();
 fetchPatientCodes(handlePatientData);
 
-console.log(selectedCode);
-console.log(medical);
+
