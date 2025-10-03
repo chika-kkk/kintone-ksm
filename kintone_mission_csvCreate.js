@@ -1,4 +1,4 @@
-console.log("K");
+console.log("OK");
 
 const patientInfoAppId = 19;
 const medicalRecordAppId = 20;
@@ -6,8 +6,6 @@ const medicalRecordAppId = 20;
 let patientList = [];
 let medicalList = [];
 let select;
-
-
 
 // 患者コード取得
 function fetchPatientCodes(callback) {
@@ -53,9 +51,15 @@ function matchPatientCodes(patientList, medicalList) {
   return matched;
 }
 
+// ドロップダウン作成（画面下への追加は削除済み）
+function setupDropdown() {
+  select = document.createElement("select");
+  select.id = "patientDropdown";
+}
+
+// CSV作成処理（省略せずそのまま）
 function createCSV(matchedCodes) {
   const selectedCode = matchedCodes[0];
-
   const overlay = document.createElement("div");
   overlay.style.position = "fixed";
   overlay.style.top = "0";
@@ -80,7 +84,6 @@ function createCSV(matchedCodes) {
   overlay.appendChild(modal);
   document.body.appendChild(overlay);
 
-  // ボタン作成
   const downloadBtn = document.createElement("button");
   downloadBtn.textContent = "CSVダウンロード";
   downloadBtn.style.marginTop = "10px";
@@ -90,7 +93,6 @@ function createCSV(matchedCodes) {
   closeBtn.style.marginTop = "10px";
   closeBtn.addEventListener("click", () => overlay.remove());
 
-  // ボタンコンテナ
   const buttonContainer = document.createElement("div");
   buttonContainer.style.display = "flex";
   buttonContainer.style.justifyContent = "flex-end";
@@ -99,7 +101,6 @@ function createCSV(matchedCodes) {
   buttonContainer.appendChild(downloadBtn);
   buttonContainer.appendChild(closeBtn);
 
-  // 患者情報取得
   const patientQuery = `患者コード = "${selectedCode}"`;
   kintone.api(kintone.api.url('/k/v1/records', true), 'GET', {
     app: patientInfoAppId,
@@ -173,54 +174,20 @@ function createCSV(matchedCodes) {
   });
 }
 
-const headerSpace = kintone.app.getHeaderMenuSpaceElement();
+// 一覧画面のヘッダーにボタンとドロップダウンを追加
+(function() {
+  "use strict";
 
-// コンテナを作って横並びに配置
-const container = document.createElement("div");
-container.style.display = "flex";
-container.style.alignItems = "center";
-container.style.gap = "10px";
+  kintone.events.on('app.record.index.show', function() {
+    if (document.getElementById("csvCreateButton")) return;
 
-// CSV作成ボタン
-const csvCreateButton = document.createElement("button");
-csvCreateButton.id = "csvCreateButton";
-csvCreateButton.textContent = "CSV作成する！";
+    const headerSpace = kintone.app.getHeaderMenuSpaceElement();
 
-// ドロップダウン
-select = document.createElement("select");
-select.id = "patientDropdown";
+    const container = document.createElement("div");
+    container.style.display = "flex";
+    container.style.alignItems = "center";
+    container.style.gap = "10px";
 
-// 並べて追加
-container.appendChild(csvCreateButton);
-container.appendChild(select);
-headerSpace.appendChild(container);
-
-// ドロップダウンに患者コードを追加
-fetchPatientCodes(function(resp) {
-  const records = resp.records;
-  patientList = records.map(r => r.患者コード.value);
-  patientList.forEach(code => {
-    const option = document.createElement("option");
-    option.value = code;
-    option.textContent = code;
-    select.appendChild(option);
-  });
-});
-
-// ボタンのクリック処理
-csvCreateButton.addEventListener("click", function() {
-  if (!select || typeof select.value === 'undefined') {
-    alert("患者コードを選択してください");
-    return;
-  }
-  const selectedCode = select.value;
-  const matched = matchPatientCodes([selectedCode], medicalList);
-  createCSV(matched);
-});
-
-  });
-})();
-
-
-// 初期化
-fetchPatientCodes(handlePatientData);
+    const csvCreateButton = document.createElement("button");
+    csvCreateButton.id = "csvCreateButton";
+    csvCreateButton.textContent = "CSV
