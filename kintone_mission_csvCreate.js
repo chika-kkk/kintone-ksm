@@ -1,4 +1,4 @@
-console.log("ｋ");
+console.log("おお");
 
 const patientInfoAppId = 19;
 const medicalRecordAppId = 20;
@@ -134,11 +134,6 @@ kintone.api(kintone.api.url('/k/v1/records', true), 'GET', {
     document.getElementById("性別").textContent = patient.性別.value;
     document.getElementById("生年月日").textContent = patient.生年月日.value;
     document.getElementById("病名").textContent = patient.病名.value;
-    document.getElementById("体温").textContent = patient.体温.value;
-    document.getElementById("脈").textContent = patient.脈.value;
-    document.getElementById("収縮期血圧").textContent = patient.収縮期血圧.value;
-    document.getElementById("拡張期血圧").textContent = patient.拡張期血圧.value;
-    document.getElementById("呼吸数").textContent = patient.呼吸数.value;
     document.getElementById("担当医").textContent = patient.担当医.value;
     document.getElementById("担当看護師").textContent = patient.担当看護師.value;
     document.getElementById("承認日時").textContent = patient.承認日時.value;
