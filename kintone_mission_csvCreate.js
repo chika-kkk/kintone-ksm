@@ -122,10 +122,10 @@ function createCSV(matchedCodes) {
     }, function(medicalResp) {
       const medical = medicalResp.records[0];
 
-      fetch('popupTemplate.html')
-  .then(response => response.text())
-  .then(template => {
-    modal.innerHTML = template;
+      fetch("https://chika-kkk.github.io/kintone-ksm/kintone_mission1popupTemplate.html")
+  .then(res => res.text())
+  .then(html => {
+    modal.innerHTML = html;
 
     // データを埋め込む
     document.getElementById("氏名").textContent = patient.氏名.value;
