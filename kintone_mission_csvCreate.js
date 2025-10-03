@@ -1,4 +1,4 @@
-console.log("ok");
+console.log("k");
 
 const patientInfoAppId = 19;
 const medicalRecordAppId = 20;
