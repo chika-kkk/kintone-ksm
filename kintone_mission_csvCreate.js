@@ -1,4 +1,4 @@
-console.log("O");
+console.log("Ok");
 
 const patientInfoAppId = 19;
 const medicalRecordAppId = 20;
@@ -21,11 +21,14 @@ function handlePatientData(resp) {
   patientList = records.map(r => r.患者コード.value);
   console.log('患者コード一覧:', patientList);
 
-  if (!select) {
-    console.warn("select が未定義です。setupDropdown() が呼ばれていない可能性があります。");
-    return;
-  }
+　const defaultOption = document.createElement("option");
+defaultOption.value = "";
+defaultOption.textContent = "選択してください";
+defaultOption.disabled = true;
+defaultOption.selected = true;
+select.appendChild(defaultOption);
 
+  
   patientList.forEach(code => {
     const option = document.createElement("option");
     option.value = code;
@@ -51,13 +54,13 @@ function matchPatientCodes(patientList, medicalList) {
   return matched;
 }
 
-// ドロップダウン作成（画面下への追加は削除済み）
+// ドロップダウン作成
 function setupDropdown() {
   select = document.createElement("select");
   select.id = "patientDropdown";
 }
 
-// CSV作成処理（省略せずそのまま）
+// CSV作成処理
 function createCSV(matchedCodes) {
   const selectedCode = matchedCodes[0];
   const overlay = document.createElement("div");
@@ -192,7 +195,7 @@ function createCSV(matchedCodes) {
     csvCreateButton.id = "csvCreateButton";
     csvCreateButton.textContent = "CSV作成する！";
 
-    setupDropdown(); // ドロップダウン要素を作成
+    setupDropdown();
 
     container.appendChild(csvCreateButton);
     container.appendChild(select);
