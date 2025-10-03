@@ -1,4 +1,4 @@
-console.log("おｋ");
+console.log("お");
 
 const patientInfoAppId = 19;
 const medicalRecordAppId = 20;
@@ -114,7 +114,7 @@ function createCSV(matchedCodes) {
     }
 
     // カルテ情報取得
-    const medicalQuery = `患者コード = "${selectedCode}"`;
+    const medicalQuery = `患者コード = "${selectedCode}" order by 日付 desc limit 1`;
     kintone.api(kintone.api.url('/k/v1/records', true), 'GET', {
       app: 20,
       query: medicalQuery,
