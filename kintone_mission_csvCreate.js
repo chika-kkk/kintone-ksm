@@ -7,12 +7,7 @@ let patientList = [];
 let medicalList = [];
 let select;
 
-// ドロップダウン作成
-function setupDropdown() {
-  select = document.createElement("select");
-  select.id = "patientDropdown";
-  document.body.appendChild(select);
-}
+
 
 // 患者コード取得
 function fetchPatientCodes(callback) {
@@ -191,6 +186,13 @@ function createCSV(matchedCodes) {
 
     const headerSpace = kintone.app.getHeaderMenuSpaceElement();
     headerSpace.appendChild(csvCreateButton);
+
+    // ドロップダウン作成
+function setupDropdown() {
+  select = document.createElement("select");
+  select.id = "patientDropdown";
+  document.body.appendChild(select);
+}
 
     csvCreateButton.addEventListener("click", function() {
       if (!select || typeof select.value === 'undefined') {
