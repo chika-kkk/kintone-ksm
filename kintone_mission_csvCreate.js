@@ -173,40 +173,54 @@ function createCSV(matchedCodes) {
   });
 }
 
-(function() {
-  "use strict";
+const headerSpace = kintone.app.getHeaderMenuSpaceElement();
 
-  kintone.events.on('app.record.index.show', function() {
-    if (document.getElementById("csvCreateButton")) return;
+// コンテナを作って横並びに配置
+const container = document.createElement("div");
+container.style.display = "flex";
+container.style.alignItems = "center";
+container.style.gap = "10px";
 
-    const csvCreateButton = document.createElement("button");
-    csvCreateButton.id = "csvCreateButton";
-    csvCreateButton.textContent = "CSV作成する！";
-    csvCreateButton.style.marginRight = "10px";
+// CSV作成ボタン
+const csvCreateButton = document.createElement("button");
+csvCreateButton.id = "csvCreateButton";
+csvCreateButton.textContent = "CSV作成する！";
 
-    const headerSpace = kintone.app.getHeaderMenuSpaceElement();
-    headerSpace.appendChild(csvCreateButton);
+// ドロップダウン
+select = document.createElement("select");
+select.id = "patientDropdown";
 
-    // ドロップダウン作成
-function setupDropdown() {
-  select = document.createElement("select");
-  select.id = "patientDropdown";
-  document.body.appendChild(select);
-}
+// 並べて追加
+container.appendChild(csvCreateButton);
+container.appendChild(select);
+headerSpace.appendChild(container);
 
-    csvCreateButton.addEventListener("click", function() {
-      if (!select || typeof select.value === 'undefined') {
-        alert("患者コードを選択してください");
-        return;
-      }
-      const selectedCode = select.value;
-      const matched = matchPatientCodes([selectedCode], medicalList);
-      createCSV(matched);
-    });
+// ドロップダウンに患者コードを追加
+fetchPatientCodes(function(resp) {
+  const records = resp.records;
+  patientList = records.map(r => r.患者コード.value);
+  patientList.forEach(code => {
+    const option = document.createElement("option");
+    option.value = code;
+    option.textContent = code;
+    select.appendChild(option);
+  });
+});
+
+// ボタンのクリック処理
+csvCreateButton.addEventListener("click", function() {
+  if (!select || typeof select.value === 'undefined') {
+    alert("患者コードを選択してください");
+    return;
+  }
+  const selectedCode = select.value;
+  const matched = matchPatientCodes([selectedCode], medicalList);
+  createCSV(matched);
+});
+
   });
 })();
 
 
 // 初期化
-setupDropdown();
 fetchPatientCodes(handlePatientData);
