@@ -1,4 +1,4 @@
-console.log("おお");
+console.log("ok");
 
 const patientInfoAppId = 19;
 const medicalRecordAppId = 20;
@@ -198,3 +198,6 @@ csvCreateButton.addEventListener("click", function() {
 // 初期化
 setupDropdown();
 fetchPatientCodes(handlePatientData);
+
+console.log(selectedCode);
+console.log(medical);
