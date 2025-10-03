@@ -90,13 +90,11 @@ function createCSV(matchedCodes) {
   overlay.appendChild(modal);
   document.body.appendChild(overlay);
 
-  // 閉じるボタン（先に定義しておく）
+  // 閉じるボタン
   const closeBtn = document.createElement("button");
   closeBtn.textContent = "閉じる";
   closeBtn.style.marginTop = "10px";
   closeBtn.addEventListener("click", () => overlay.remove());
-
-
 
   overlay.appendChild(modal);
   document.body.appendChild(overlay);
@@ -124,26 +122,24 @@ function createCSV(matchedCodes) {
     }, function(medicalResp) {
       const medical = medicalResp.records[0];
 
-      const html = `
-        <h3>患者情報</h3>
-        <p>氏名: ${patient.氏名.value}</p>
-        <p>性別: ${patient.性別.value}</p>
-        <p>生年月日: ${patient.生年月日.value}</p>
-        <p>病名: ${patient.病名.value}</p>
-        <p>担当医: ${patient.担当医.value}</p>
-        <p>担当看護師: ${patient.担当看護師.value}</p>
-        <p>承認日時: ${patient.承認日時.value}</p>
-        <p>担当医サイン: ${patient.担当医サイン.value}</p>
-        <h3>カルテ情報</h3>
-        ${medical ? `
-          <p>病名: ${medical.病名.value}</p>
-          <p>:体温 ${medical.体温.value}</p>
-          <p>脈: ${medical.脈.value}</p>
-          <p>収縮期血圧: ${medical.収縮期血圧.value}</p>
-          <p>拡張期血圧: ${medical.拡張期血圧.value}</p>
-          <p>呼吸数: ${medical.呼吸数.value}</p>
-        ` : `<p>カルテ情報が見つかりませんでした</p>`}
-      `;
+      fetch('popupTemplate.html')
+  .then(response => response.text())
+  .then(template => {
+    modal.innerHTML = template;
+
+    // データを埋め込む
+    document.getElementById("氏名").textContent = patient.氏名.value;
+    document.getElementById("性別").textContent = patient.性別.value;
+    document.getElementById("生年月日").textContent = patient.生年月日.value;
+    document.getElementById("病名").textContent = patient.病名.value;
+    document.getElementById("担当医").textContent = patient.担当医.value;
+    document.getElementById("担当看護師").textContent = patient.担当看護師.value;
+    document.getElementById("承認日時").textContent = patient.承認日時.value;
+    document.getElementById("担当医サイン").textContent = patient.担当医サイン.value;
+
+    modal.appendChild(downloadBtn);
+    modal.appendChild(closeBtn);
+  });
 
       modal.innerHTML = html;
 
