@@ -1,4 +1,4 @@
-console.log("Ok");
+console.log("OK");
 
 const patientInfoAppId = 19;
 const medicalRecordAppId = 20;
@@ -204,7 +204,7 @@ function createCSV(matchedCodes) {
     fetchPatientCodes(handlePatientData);
 
     csvCreateButton.addEventListener("click", function() {
-      if (!select || typeof select.value === 'undefined') {
+      if (!select || !select.value) {
         alert("患者コードを選択してください");
         return;
       }
