@@ -1,4 +1,4 @@
-console.log("ok");
+console.log("読み込み");
 
 const patientInfoAppId = 19;
 const medicalRecordAppId = 20;
