@@ -115,12 +115,14 @@ function createCSV(matchedCodes) {
 
     // カルテ情報取得
     const medicalQuery = `患者コード = "${selectedCode}" order by 日付 desc limit 1`;
-    kintone.api(kintone.api.url('/k/v1/records', true), 'GET', {
-      app: 20,
-      query: medicalQuery,
-      fields: ['病名', '体温',　'脈', '収縮期血圧', '拡張期血圧', '呼吸数']
-    }, function(medicalResp) {
-      const medical = medicalResp.records[0];
+
+kintone.api(kintone.api.url('/k/v1/records', true), 'GET', {
+  app: 20,
+  query: medicalQuery,
+  fields: ['病名', '体温', '脈', '収縮期血圧', '拡張期血圧', '呼吸数', '日付']
+}, function(medicalResp) {
+  const medical = medicalResp.records[0];
+  console.log("最新のカルテ:", medical);
 
       fetch("https://chika-kkk.github.io/kintone-ksm/kintone_mission1popupTemplate.html")
   .then(res => res.text())
