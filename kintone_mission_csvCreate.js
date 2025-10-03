@@ -139,13 +139,12 @@ kintone.api(kintone.api.url('/k/v1/records', true), 'GET', {
     document.getElementById("生年月日").textContent = patient.生年月日.value;
     document.getElementById("病名").textContent = patient.病名.value;
     document.getElementById("体温").textContent = medical.体温?.value || "未記録";
-document.getElementById("脈").textContent = medical.脈?.value || "未記録";
-document.getElementById("収縮期血圧").textContent = medical.収縮期血圧?.value || "未記録";
-document.getElementById("拡張期血圧").textContent = medical.拡張期血圧?.value || "未記録";
-document.getElementById("呼吸数").textContent = medical.呼吸数?.value || "未記録";
-
-    document.getElementById("担当医").textContent = patient.担当医.value;
-    document.getElementById("担当看護師").textContent = patient.担当看護師.value;
+　　document.getElementById("脈").textContent = medical.脈?.value || "未記録";
+　　document.getElementById("収縮期血圧").textContent = medical.収縮期血圧?.value || "未記録";
+　　document.getElementById("拡張期血圧").textContent = medical.拡張期血圧?.value || "未記録";
+　　document.getElementById("呼吸数").textContent = medical.呼吸数?.value || "未記録";
+    document.getElementById("担当医").textContent = patient.担当医.value[0]?.name;
+    document.getElementById("担当看護師").textContent = patient.担当看護師.value[0]?.name;
     document.getElementById("承認日時").textContent = patient.承認日時.value;
     document.getElementById("担当医サイン").textContent = patient.担当医サイン.value;
 
